@@ -20,11 +20,17 @@ public class MongoServiceClient {
     private static final Logger logger = LoggerFactory.getLogger(MongoServiceClient.class);
     private final MongoClient mongoClient;
 
+    /**
+     * Initializes the MongoDB client with the given URI.
+     */
     public MongoServiceClient(@Value("${mongodb.uri}") String mongoUri) {
         logger.info("Initializing MongoServiceClient with URI: {}", mongoUri);
         this.mongoClient = MongoClients.create(mongoUri);
     }
 
+    /**
+     * Lists all databases in MongoDB.
+     */
     @Tool(description = "List all databases in MongoDB.")
     public List<String> listDatabases() {
         logger.info("Fetching list of databases.");
@@ -36,6 +42,9 @@ public class MongoServiceClient {
         return databaseNames;
     }
 
+    /**
+     * Lists all collections in the specified database.
+     */
     @Tool(description = "List all collections in the specified database.")
     public List<String> listCollections(String dbName) {
         logger.info("Fetching collections for database: {}", dbName);
@@ -48,6 +57,9 @@ public class MongoServiceClient {
         return collectionNames;
     }
 
+    /**
+     * Executes a simple query on a collection.
+     */
     @Tool(description = "Execute a simple query on a collection.")
     public List<Document> simpleQuery(String dbName, String collectionName, String field, Object value) {
         logger.info("Executing simple query on {}.{} where {} = {}", dbName, collectionName, field, value);
@@ -58,6 +70,9 @@ public class MongoServiceClient {
         return results;
     }
 
+    /**
+     * Executes a complex query on a collection.
+     */
     @Tool(description = "Execute a complex query on a collection.")
     public List<Document> complexQuery(String dbName, String collectionName, String jsonQuery) {
         logger.info("Executing complex query on {}.{} with query: {}", dbName, collectionName, jsonQuery);
@@ -69,6 +84,9 @@ public class MongoServiceClient {
         return results;
     }
 
+    /**
+     * Lists all indexes for a specific collection.
+     */
     @Tool(description = "List all indexes for a specific collection.")
     public List<Document> listIndexes(String dbName, String collectionName) {
         logger.info("Fetching indexes for {}.{}", dbName, collectionName);
@@ -79,6 +97,9 @@ public class MongoServiceClient {
         return indexes;
     }
 
+    /**
+     * Creates a new collection in the specified database.
+     */
     @Tool(description = "Create a new collection in the specified database.")
     public String createCollection(String dbName, String collectionName) {
         logger.info("Creating collection '{}' in database '{}'", collectionName, dbName);
@@ -88,6 +109,9 @@ public class MongoServiceClient {
         return "Collection '" + collectionName + "' created successfully in database '" + dbName + "'.";
     }
 
+    /**
+     * Inserts a document into a collection.
+     */
     @Tool(description = "Insert a document into a collection.")
     public String insertDocument(String dbName, String collectionName, String jsonDocument) {
         logger.info("Inserting document into {}.{}: {}", dbName, collectionName, jsonDocument);
