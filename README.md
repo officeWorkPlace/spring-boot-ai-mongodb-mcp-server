@@ -1,6 +1,6 @@
 # 🚀 Spring Boot AI MongoDB MCP Server
 
-[![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk/21/)
+[![Java](https://img.shields.io/badge/Java-17-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk/17/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.5-6DB33F?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/projects/spring-boot)
 [![MongoDB](https://img.shields.io/badge/MongoDB-7.0-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![MCP](https://img.shields.io/badge/MCP-1.0-blue?style=for-the-badge)](https://modelcontextprotocol.io/)
@@ -15,7 +15,7 @@ A **production-ready Spring Boot application** that implements the Model Context
 
 - 🔧 **Complete MCP Tool Suite** - 25+ MongoDB operations (CRUD, aggregation, indexing, admin)
 - 🧠 **Advanced AI Integration** - OpenAI GPT-4, Ollama, vector embeddings, semantic search
-- ⚡ **High Performance** - Java 21 virtual threads, reactive programming, connection pooling
+- ⚡ **High Performance** - Java 17 with optimized threading, reactive programming, connection pooling
 - 🔐 **Enterprise Security** - OAuth2/JWT, rate limiting, CORS, input validation
 - 📊 **Production Monitoring** - Prometheus metrics, health checks, distributed tracing
 - 🐳 **Cloud Ready** - Docker, Kubernetes, multi-stage builds, health checks
@@ -24,7 +24,7 @@ A **production-ready Spring Boot application** that implements the Model Context
 
 ## 🛠️ Technology Stack
 
-- **Framework**: Spring Boot 3.4.5 with Java 21 Virtual Threads
+- **Framework**: Spring Boot 3.4.5 with Java 17
 - **Database**: MongoDB 7.0+ with Atlas Vector Search
 - **AI Integration**: Spring AI Framework with OpenAI & Ollama
 - **Protocol**: Model Context Protocol (MCP) 1.0 Stdio/HTTP
@@ -38,7 +38,7 @@ A **production-ready Spring Boot application** that implements the Model Context
 
 ### Prerequisites
 
-- **Java 21+** (Required for virtual threads)
+- **Java 17+** (LTS Version)
 - **MongoDB 7.0+** (Local or Atlas)
 - **Maven 3.9+** (Build tool)
 - **Docker** (Optional for containerized deployment)
@@ -352,9 +352,9 @@ spec:
 ## 📈 Performance & Monitoring
 
 ### Performance Characteristics
-- **Throughput**: 10,000+ operations/second
+- **Throughput**: 5,000+ operations/second (Java 17 optimized)
 - **Latency**: <50ms p99 for simple operations, <200ms for AI operations
-- **Memory**: <1GB heap for moderate workloads with virtual threads
+- **Memory**: <1GB heap for moderate workloads with G1GC optimization
 - **Connections**: Optimized MongoDB connection pooling (5-20 connections)
 - **Scaling**: Horizontal scaling with stateless design
 
@@ -450,7 +450,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ ] **Backup & Recovery** automated solutions
 
 ### Version History
-- **v1.0.0** - Production-ready release with comprehensive MCP toolset
+- **v1.0.0** - Production-ready release with comprehensive MCP toolset (Java 17)
 - **v0.1.0** - Initial Spring AI MongoDB MCP server implementation
 
 ---
