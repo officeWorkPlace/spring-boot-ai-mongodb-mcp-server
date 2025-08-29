@@ -28,6 +28,13 @@ public class MongoServiceClient {
         this.mongoClient = MongoClients.create(mongoUri);
     }
 
+    /**
+     * Get the MongoDB client for advanced operations.
+     */
+    public MongoClient getMongoClient() {
+        return this.mongoClient;
+    }
+
     // ========== DATABASE OPERATIONS ==========
 
     /**
