@@ -16,7 +16,7 @@
 	<packaging>jar</packaging>
 
 	<name>Spring Boot AI MongoDB MCP Server</name>
-	<description>Production-ready Spring Boot AI-powered Model Context Protocol Server for MongoDB with comprehensive toolset, security, monitoring, and cloud deployment capabilities</description>
+	<description>Production-ready Spring Boot AI-powered Model Context Protocol Server for MongoDB with comprehensive toolset, security, monitoring, and cloud deployment capabilities - Java 17 Compatible</description>
 	<url>https://github.com/officeWorkPlace/spring-boot-ai-mongodb-mcp-server</url>
 
 	<licenses>
@@ -42,14 +42,14 @@
 	</scm>
 
 	<properties>
-		<java.version>21</java.version>
+		<java.version>17</java.version>
 		<spring-ai.version>1.0.0-M7</spring-ai.version>
 		<jackson.version>2.18.2</jackson.version>
 		<micrometer.version>1.14.2</micrometer.version>
 		<testcontainers.version>1.20.4</testcontainers.version>
-		<maven.compiler.source>21</maven.compiler.source>
-		<maven.compiler.target>21</maven.compiler.target>
-		<maven.compiler.release>21</maven.compiler.release>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.release>17</maven.compiler.release>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
 		<!-- Plugin versions -->
@@ -285,10 +285,10 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
-					<release>21</release>
-					<compilerArgs>
-						<arg>--enable-preview</arg>
-					</compilerArgs>
+					<release>17</release>
+					<source>17</source>
+					<target>17</target>
+					<parameters>true</parameters>
 				</configuration>
 			</plugin>
 
@@ -299,7 +299,6 @@
 				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
 					<useSystemClassLoader>false</useSystemClassLoader>
-					<argLine>--enable-preview</argLine>
 				</configuration>
 			</plugin>
 
@@ -308,9 +307,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>${maven-failsafe-plugin.version}</version>
-				<configuration>
-					<argLine>--enable-preview</argLine>
-				</configuration>
 				<executions>
 					<execution>
 						<goals>
