@@ -99,7 +99,7 @@ ai:
 logging:
   level:
     root: ${LOGGING_LEVEL_ROOT:INFO}
-    com.officeworkplace: ${LOGGING_LEVEL_COM_OFFICEWORKPLACE:INFO}
+    com.deepai: ${LOGGING_LEVEL_COM_DEEPAI:INFO}
     org.springframework.web: ${LOGGING_LEVEL_SPRING_WEB:WARN}
     org.springframework.data.mongodb: ${LOGGING_LEVEL_MONGODB:INFO}
     org.springframework.ai: ${LOGGING_LEVEL_SPRING_AI:INFO}
@@ -206,7 +206,7 @@ spring:
 logging:
   level:
     root: DEBUG
-    com.officeworkplace: DEBUG
+    com.deepai: DEBUG
     org.springframework.web: DEBUG
     
 management:
@@ -228,4 +228,4 @@ spring:
 logging:
   level:
     root: WARN
-    com.officeworkplace: INFO
+    com.deepai: INFO
