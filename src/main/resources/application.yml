@@ -1,0 +1,231 @@
+# Production Spring Boot AI MongoDB MCP Server Configuration
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css
+  http2:
+    enabled: true
+  ssl:
+    enabled: ${SSL_ENABLED:false}
+    key-store: ${SSL_KEYSTORE_PATH:}
+    key-store-password: ${SSL_KEYSTORE_PASSWORD:}
+
+spring:
+  application:
+    name: spring-boot-ai-mongo-mcp-server
+  
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:prod}
+  
+  # MongoDB Configuration
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://${MONGO_HOST:localhost}:${MONGO_PORT:27017}/${MONGO_DATABASE:mcpdb}}
+      database: ${MONGO_DATABASE:mcpdb}
+      auto-index-creation: true
+      
+  # Jackson JSON Configuration
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      indent-output: true
+    deserialization:
+      fail-on-unknown-properties: false
+    property-naming-strategy: SNAKE_CASE
+    
+  # Cache Configuration
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=5m
+      
+  # Security Configuration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI:}
+          
+  # Virtual Threads
+  threads:
+    virtual:
+      enabled: true
+
+# MCP Server Configuration
+mcp:
+  server:
+    name: "spring-boot-ai-mongo-mcp-server"
+    version: "1.0.0"
+    description: "Production-ready Spring Boot AI MongoDB MCP Server"
+    
+  tools:
+    enabled: true
+    timeout: ${MCP_TOOL_TIMEOUT:30000}
+    rate-limit:
+      enabled: true
+      requests-per-minute: ${MCP_RATE_LIMIT:1000}
+      
+  # Protocol Configuration
+  protocol:
+    stdio:
+      enabled: true
+      buffer-size: 8192
+    http:
+      enabled: false
+      
+# AI Configuration
+ai:
+  openai:
+    api-key: ${OPENAI_API_KEY:}
+    model: ${OPENAI_MODEL:gpt-4o-mini}
+    temperature: ${OPENAI_TEMPERATURE:0.7}
+    
+  ollama:
+    base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+    model: ${OLLAMA_MODEL:llama3.1:8b}
+    
+  vector:
+    store:
+      mongodb:
+        enabled: ${AI_VECTOR_STORE_ENABLED:true}
+        collection-name: ${AI_VECTOR_COLLECTION:vectors}
+        index-name: ${AI_VECTOR_INDEX:vector_index}
+
+# Logging Configuration
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT:INFO}
+    com.officeworkplace: ${LOGGING_LEVEL_COM_OFFICEWORKPLACE:INFO}
+    org.springframework.web: ${LOGGING_LEVEL_SPRING_WEB:WARN}
+    org.springframework.data.mongodb: ${LOGGING_LEVEL_MONGODB:INFO}
+    org.springframework.ai: ${LOGGING_LEVEL_SPRING_AI:INFO}
+    org.springframework.security: ${LOGGING_LEVEL_SECURITY:WARN}
+    
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    
+  file:
+    name: ${LOGGING_FILE_NAME:logs/mcp-server.log}
+    max-size: ${LOGGING_FILE_MAX_SIZE:100MB}
+    max-history: ${LOGGING_FILE_MAX_HISTORY:30}
+
+# Management & Monitoring Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ${MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE:health,info,metrics,prometheus}
+      base-path: /actuator
+      cors:
+        allowed-origins: "*"
+        allowed-methods: GET,POST
+        
+  endpoint:
+    health:
+      show-details: ${MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS:when_authorized}
+      show-components: always
+      
+    metrics:
+      enabled: true
+      
+    prometheus:
+      enabled: true
+      
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 30s
+        
+    tags:
+      application: ${spring.application.name}
+      environment: ${SPRING_PROFILES_ACTIVE:prod}
+      
+  tracing:
+    sampling:
+      probability: ${MANAGEMENT_TRACING_SAMPLING_PROBABILITY:0.1}
+      
+  health:
+    mongo:
+      enabled: true
+    diskspace:
+      enabled: true
+      threshold: 100MB
+
+# Application-specific Configuration
+app:
+  name: ${spring.application.name}
+  version: "@project.version@"
+  description: "Production-ready Spring Boot AI MongoDB MCP Server"
+  
+  # Rate Limiting
+  rate-limit:
+    enabled: ${APP_RATE_LIMIT_ENABLED:true}
+    requests-per-minute: ${APP_RATE_LIMIT_RPM:1000}
+    
+  # Security
+  security:
+    cors:
+      enabled: ${APP_SECURITY_CORS_ENABLED:true}
+      allowed-origins: ${APP_SECURITY_CORS_ORIGINS:*}
+      
+  # Performance
+  performance:
+    cache:
+      enabled: ${APP_PERFORMANCE_CACHE_ENABLED:true}
+      ttl: ${APP_PERFORMANCE_CACHE_TTL:300}
+      
+    connection-pool:
+      max-size: ${APP_CONNECTION_POOL_MAX_SIZE:20}
+      min-size: ${APP_CONNECTION_POOL_MIN_SIZE:5}
+      
+  # MongoDB Specific
+  mongodb:
+    connection:
+      timeout: ${APP_MONGODB_CONNECTION_TIMEOUT:10000}
+      socket-timeout: ${APP_MONGODB_SOCKET_TIMEOUT:0}
+      max-wait-time: ${APP_MONGODB_MAX_WAIT_TIME:120000}
+      
+    pool:
+      max-size: ${APP_MONGODB_POOL_MAX_SIZE:20}
+      min-size: ${APP_MONGODB_POOL_MIN_SIZE:5}
+      max-idle-time: ${APP_MONGODB_POOL_MAX_IDLE_TIME:0}
+
+---
+# Development Profile
+spring:
+  config:
+    activate:
+      on-profile: dev
+      
+logging:
+  level:
+    root: DEBUG
+    com.officeworkplace: DEBUG
+    org.springframework.web: DEBUG
+    
+management:
+  endpoint:
+    health:
+      show-details: always
+
+---
+# Testing Profile  
+spring:
+  config:
+    activate:
+      on-profile: test
+      
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/mcpdb_test
+      
+logging:
+  level:
+    root: WARN
+    com.officeworkplace: INFO
