@@ -17,7 +17,7 @@
 	<description>A Spring Boot AI-powered Model Context Protocol Server for interacting with MongoDB</description>
 
 	<properties>
-		<java.version>21</java.version>
+		<java.version>17</java.version>
 		<spring-ai.version>1.0.0-M7</spring-ai.version>
 	</properties>
 
