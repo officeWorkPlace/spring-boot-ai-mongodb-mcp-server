@@ -9,11 +9,11 @@
 
 ## 📋 Overview
 
-A **production-ready Spring Boot application** that implements the Model Context Protocol (MCP) for MongoDB operations with comprehensive AI integration. This server provides a complete toolset for database operations, AI-powered document analysis, vector similarity search, and enterprise-grade monitoring and security.
+A **production-ready Spring Boot application** that implements the Model Context Protocol (MCP) for MongoDB operations with comprehensive AI integration. This server provides a complete toolset of **45+ MCP tools** for database operations, AI-powered document analysis, vector similarity search, and enterprise-grade monitoring and security.
 
 ### 🎯 Key Features
 
-- 🔧 **Complete MCP Tool Suite** - 25+ MongoDB operations (CRUD, aggregation, indexing, admin)
+- 🔧 **Complete MCP Tool Suite** - 45+ MongoDB operations across three service categories
 - 🧠 **Advanced AI Integration** - OpenAI GPT-4, Ollama, vector embeddings, semantic search
 - ⚡ **High Performance** - Java 17 with optimized threading, reactive programming, connection pooling
 - 🔐 **Enterprise Security** - OAuth2/JWT, rate limiting, CORS, input validation
@@ -106,43 +106,43 @@ Add to your `claude_desktop_config.json`:
 }
 ```
 
-## 🔧 Available MCP Tools
+## 🔧 Available MCP Tools (45+ Tools)
 
-### 📊 Database Operations
+### 📊 Core Database Operations (20+ Tools)
 - `listDatabases` - List all available databases with statistics
 - `createDatabase` - Create new database with options
 - `dropDatabase` - Delete database with confirmation
 - `getDatabaseStats` - Comprehensive database statistics
 - `ping` - Test database connectivity
-
-### 📚 Collection Management
 - `listCollections` - List collections with metadata
 - `createCollection` - Create collection with schema validation
 - `dropCollection` - Delete collection with safety checks
 - `getCollectionStats` - Detailed collection statistics
 - `renameCollection` - Rename collection safely
-
-### 📄 Document Operations
 - `insertDocument` - Insert single document with validation
 - `insertMany` - Bulk insert multiple documents
 - `findDocument` - Advanced query with projection and sorting
 - `findOne` - Find single document by criteria
 - `updateDocument` - Update documents with operators
-- `updateMany` - Bulk update operations
 - `deleteDocument` - Delete documents with filters
-- `deleteMany` - Bulk delete operations
 - `countDocuments` - Count documents matching criteria
-- `replaceDocument` - Replace entire document
 
-### 🔍 Advanced Queries & Analytics
-- `aggregatePipeline` - Execute complex aggregation pipelines
-- `complexQuery` - Advanced MongoDB queries with operators
-- `distinctValues` - Get distinct values from fields
+### 🔍 Advanced Analytics & Administration (15+ Tools)
+- `aggregateDocuments` - Execute complex aggregation pipelines
+- `getDistinctValues` - Get distinct values from fields
 - `groupByField` - Group documents by field values
 - `textSearch` - Full-text search with scoring
-- `geoSearch` - Geospatial queries and operations
+- `geoNearSearch` - Geospatial proximity search
+- `listIndexes` - List all indexes with details
+- `createIndex` - Create single or compound indexes
+- `createVectorIndex` - Create vector search indexes for AI
+- `dropIndex` - Delete indexes safely
+- `reIndex` - Rebuild indexes for optimization
+- `explainQuery` - Analyze query execution plans
+- `validateSchema` - Validate document schemas
+- `repairDatabase` - Database maintenance operations
 
-### 🧠 AI-Powered Operations
+### 🧠 AI-Powered Operations (10+ Tools)
 - `vectorSearch` - Semantic similarity search using embeddings
 - `aiAnalyzeDocument` - AI-powered document content analysis
 - `aiAnalyzeCollection` - AI analysis of collection structure and patterns
@@ -150,21 +150,6 @@ Add to your `claude_desktop_config.json`:
 - `aiDocumentSummary` - Summarize document content using AI
 - `semanticSearch` - Natural language search across collections
 - `generateEmbeddings` - Create vector embeddings for documents
-
-### 📇 Index Management
-- `listIndexes` - List all indexes with details
-- `createIndex` - Create single or compound indexes
-- `createVectorIndex` - Create vector search indexes for AI
-- `dropIndex` - Delete indexes safely
-- `reIndex` - Rebuild indexes for optimization
-- `explainQuery` - Analyze query execution plans
-
-### 🔐 Security & Administration
-- `validateSchema` - Validate document schemas
-- `repairDatabase` - Database maintenance operations
-- `compact` - Optimize collection storage
-- `backup` - Create collection backups
-- `restore` - Restore from backups
 
 ## 📊 API Examples
 
@@ -234,7 +219,7 @@ curl -X POST http://localhost:8080/mcp/tools/vectorSearch \
 
 ```bash
 # Complex aggregation
-curl -X POST http://localhost:8080/mcp/tools/aggregatePipeline \
+curl -X POST http://localhost:8080/mcp/tools/aggregateDocuments \
   -H "Content-Type: application/json" \
   -d '{
     "dbName": "mcpdb",
@@ -268,6 +253,23 @@ curl -X POST http://localhost:8080/mcp/tools/aggregatePipeline \
                │ • Vector Search│                │ • Chat      │                │ • Tracing   │
                │ • Aggregation  │                │ • Analysis  │                │ • Metrics   │
                └────────────────┘                └─────────────┘                └─────────────┘
+```
+
+### Service Layer Structure
+```
+McpConfiguration (45+ Tools)
+├── MongoServiceClient (20+ Core Operations)
+│   ├── Database Management (5 tools)
+│   ├── Collection Operations (5 tools)
+│   └── Document CRUD (10+ tools)
+├── MongoAdvancedAnalyticsService (15+ Analytics)
+│   ├── Aggregation Framework (5 tools)
+│   ├── Index Management (5 tools)
+│   └── Query Optimization (5+ tools)
+└── MongoAIService (10+ AI-Powered)
+    ├── Vector Search (3 tools)
+    ├── Semantic Analysis (4 tools)
+    └── Content Generation (3+ tools)
 ```
 
 ## 🐳 Deployment
@@ -450,7 +452,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ ] **Backup & Recovery** automated solutions
 
 ### Version History
-- **v1.0.0** - Production-ready release with comprehensive MCP toolset (Java 17)
+- **v1.0.0** - Production-ready release with comprehensive 45+ MCP toolset (Java 17)
 - **v0.1.0** - Initial Spring AI MongoDB MCP server implementation
 
 ---
