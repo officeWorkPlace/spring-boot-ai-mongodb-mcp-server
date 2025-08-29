@@ -1,4 +1,4 @@
-package com.bootcamptoprod;
+package com.deepai;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
