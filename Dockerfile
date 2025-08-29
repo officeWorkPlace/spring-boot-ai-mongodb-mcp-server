@@ -1,5 +1,5 @@
 # Multi-stage Docker build for production-ready Spring Boot AI MongoDB MCP Server
-FROM eclipse-temurin:21-jdk-alpine AS builder
+FROM eclipse-temurin:17-jdk-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -19,7 +19,7 @@ RUN ./mvnw clean package -DskipTests && \
     java -Djarmode=layertools -jar target/*.jar extract
 
 # Production stage
-FROM eclipse-temurin:21-jre-alpine AS production
+FROM eclipse-temurin:17-jre-alpine AS production
 
 # Install required packages
 RUN apk add --no-cache \
@@ -51,15 +51,15 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:8080/actuator/health || exit 1
 
-# Set JVM options for production
-ENV JAVA_OPTS="-XX:+UseZGC \
-               -XX:+UnlockExperimentalVMOptions \
+# Set JVM options for production (Java 17 compatible)
+ENV JAVA_OPTS="-XX:+UseG1GC \
                -XX:+UseContainerSupport \
                -XX:MaxRAMPercentage=75.0 \
                -XX:+ExitOnOutOfMemoryError \
                -XX:+HeapDumpOnOutOfMemoryError \
                -XX:HeapDumpPath=/tmp/heapdump.hprof \
-               -Djava.security.egd=file:/dev/./urandom"
+               -Djava.security.egd=file:/dev/./urandom \
+               -Dspring.jmx.enabled=false"
 
 # Environment variables
 ENV SPRING_PROFILES_ACTIVE=prod
@@ -71,9 +71,9 @@ ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS org.springframework.boot.loader.launch.
 # Labels for metadata
 LABEL maintainer="officeWorkPlace <office.place.work.007@gmail.com>"
 LABEL version="1.0.0"
-LABEL description="Production-ready Spring Boot AI MongoDB MCP Server"
+LABEL description="Production-ready Spring Boot AI MongoDB MCP Server - Java 17"
 LABEL org.opencontainers.image.source="https://github.com/officeWorkPlace/spring-boot-ai-mongodb-mcp-server"
 LABEL org.opencontainers.image.title="Spring Boot AI MongoDB MCP Server"
-LABEL org.opencontainers.image.description="Production-ready Model Context Protocol server for MongoDB with AI integration"
+LABEL org.opencontainers.image.description="Production-ready Model Context Protocol server for MongoDB with AI integration (Java 17)"
 LABEL org.opencontainers.image.vendor="officeWorkPlace"
 LABEL org.opencontainers.image.licenses="MIT"
