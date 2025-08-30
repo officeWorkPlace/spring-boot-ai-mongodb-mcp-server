@@ -1,0 +1,1653 @@
+{
+  "info": {
+    "name": "MongoDB MCP Server API Collection - One Click Automation",
+    "description": "Complete automated Postman collection for testing all 39 MongoDB MCP Server tools via MongoMcpApiController with validation and one-click execution",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "admin",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "admin",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global Pre-request Script for One-Click Automation",
+          "console.log('🚀 Starting MongoDB MCP Server API Test Suite');",
+          "",
+          "// Set dynamic variables",
+          "pm.globals.set('timestamp', new Date().toISOString());",
+          "pm.globals.set('testRunId', pm.variables.replaceIn('{{$randomUUID}}'));",
+          "",
+          "// Initialize test counters",
+          "if (!pm.globals.get('testsPassed')) {",
+          "    pm.globals.set('testsPassed', 0);",
+          "    pm.globals.set('testsFailed', 0);",
+          "    pm.globals.set('testsTotal', 39);",
+          "}",
+          "",
+          "console.log('📊 Test Run ID: ' + pm.globals.get('testRunId'));"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global Test Script for Result Aggregation",
+          "const testName = pm.info.requestName;",
+          "",
+          "// Log test execution",
+          "console.log(`✅ Executed: ${testName} (${pm.response.responseTime}ms)`);",
+          "",
+          "// Basic response validation",
+          "pm.test('Response status should be successful', function () {",
+          "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+          "});",
+          "",
+          "pm.test('Response time should be reasonable', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+          "});",
+          "",
+          "// Update counters",
+          "const passed = pm.globals.get('testsPassed') || 0;",
+          "const failed = pm.globals.get('testsFailed') || 0;",
+          "",
+          "if (pm.response.code >= 200 && pm.response.code < 300) {",
+          "    pm.globals.set('testsPassed', passed + 1);",
+          "} else {",
+          "    pm.globals.set('testsFailed', failed + 1);",
+          "    console.error(`❌ Failed: ${testName} - Status: ${pm.response.code}`);",
+          "}",
+          "",
+          "// Final summary check",
+          "const currentTest = (passed + failed + 1);",
+          "const totalTests = pm.globals.get('testsTotal');",
+          "",
+          "if (currentTest >= totalTests) {",
+          "    const finalPassed = pm.globals.get('testsPassed');",
+          "    const finalFailed = pm.globals.get('testsFailed');",
+          "    console.log('🏁 TEST SUITE COMPLETED!');",
+          "    console.log(`📈 Results: ${finalPassed} passed, ${finalFailed} failed out of ${totalTests} tests`);",
+          "    console.log(`🎯 Success Rate: ${((finalPassed/totalTests)*100).toFixed(2)}%`);",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string",
+      "description": "Base URL for the MongoDB MCP Server API"
+    },
+    {
+      "key": "dbName",
+      "value": "testDB_{{$randomInt}}",
+      "type": "string",
+      "description": "Dynamic database name to avoid conflicts"
+    },
+    {
+      "key": "collectionName",
+      "value": "testCollection_{{$timestamp}}",
+      "type": "string",
+      "description": "Dynamic collection name with timestamp"
+    },
+    {
+      "key": "documentId",
+      "value": "",
+      "type": "string",
+      "description": "Stores document ID from insert operations"
+    },
+    {
+      "key": "indexName",
+      "value": "",
+      "type": "string",
+      "description": "Stores index name from create operations"
+    }
+  ],
+  "item": [
+    {
+      "name": "MongoServiceClient Tools (20 endpoints)",
+      "item": [
+        {
+          "name": "01. Ping MongoDB Connection",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Ping response should be successful', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Ping response should contain success message', function () {",
+                  "    const responseText = pm.response.text();",
+                  "    pm.expect(responseText).to.include('ping');",
+                  "});",
+                  "",
+                  "console.log('🏓 MongoDB connection verified successfully');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/ping",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "ping"
+              ]
+            }
+          }
+        },
+        {
+          "name": "02. List All Databases",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('List databases response should be successful', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response should be an array', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.be.an('array');",
+                  "});",
+                  "",
+                  "console.log('📊 Found ' + pm.response.json().length + ' databases');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/databases",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "databases"
+              ]
+            }
+          }
+        },
+        {
+          "name": "03. Create Database",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Create database response should be successful', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Database creation should return success message', function () {",
+                  "    const responseText = pm.response.text();",
+                  "    pm.expect(responseText).to.include('Database');",
+                  "});",
+                  "",
+                  "console.log('🗄️ Database created: ' + pm.variables.get('dbName'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/databases?dbName={{dbName}}&options=%7B%7D",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "databases"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "options",
+                  "value": "%7B%7D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "04. Drop Database",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/databases/{{dbName}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "databases",
+                "{{dbName}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "05. Get Database Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/databases/{{dbName}}/stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "databases",
+                "{{dbName}}",
+                "stats"
+              ]
+            }
+          }
+        },
+        {
+          "name": "06. List Collections",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/collections/{{dbName}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "collections",
+                "{{dbName}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "07. Create Collection",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/collections?dbName={{dbName}}&collectionName={{collectionName}}&validationSchema={}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "collections"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "validationSchema",
+                  "value": "%7B%7D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "08. Drop Collection",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/collections/{{dbName}}/{{collectionName}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "collections",
+                "{{dbName}}",
+                "{{collectionName}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "09. Rename Collection",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/collections/rename?dbName={{dbName}}&oldName={{collectionName}}&newName=newCollectionName",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "collections",
+                "rename"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "oldName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "newName",
+                  "value": "newCollectionName"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "10. Get Collection Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/collections/{{dbName}}/{{collectionName}}/stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "collections",
+                "{{dbName}}",
+                "{{collectionName}}",
+                "stats"
+              ]
+            }
+          }
+        },
+        {
+          "name": "11. Find Documents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/documents/find?dbName={{dbName}}&collectionName={{collectionName}}&filter=%7B%7D&projection=%7B%7D&sort=%7B%7D&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "documents",
+                "find"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "filter",
+                  "value": "%7B%7D"
+                },
+                {
+                  "key": "projection",
+                  "value": "%7B%7D"
+                },
+                {
+                  "key": "sort",
+                  "value": "%7B%7D"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "12. Find One Document",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/documents/findOne?dbName={{dbName}}&collectionName={{collectionName}}&filter=%7B%7D",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "documents",
+                "findOne"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "filter",
+                  "value": "%7B%7D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "13. Insert Document",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Generate dynamic test data",
+                  "const testUser = {",
+                  "    name: pm.variables.replaceIn('{{$randomFullName}}'),",
+                  "    age: Math.floor(Math.random() * 50) + 18,",
+                  "    email: pm.variables.replaceIn('{{$randomEmail}}'),",
+                  "    profession: pm.variables.replaceIn('{{$randomJobTitle}}'),",
+                  "    createdAt: new Date().toISOString(),",
+                  "    testRunId: pm.globals.get('testRunId')",
+                  "};",
+                  "",
+                  "pm.request.body.raw = JSON.stringify(testUser, null, 2);",
+                  "console.log('📝 Generated test user:', testUser.name);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Insert document should be successful', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response should contain success message', function () {",
+                  "    const responseText = pm.response.text();",
+                  "    pm.expect(responseText).to.include('inserted');",
+                  "});",
+                  "",
+                  "// Try to extract document ID from response if available",
+                  "try {",
+                  "    const responseText = pm.response.text();",
+                  "    if (responseText.includes('ObjectId')) {",
+                  "        const match = responseText.match(/ObjectId\\('([^']+)'\\)/);",
+                  "        if (match && match[1]) {",
+                  "            pm.collectionVariables.set('documentId', match[1]);",
+                  "            console.log('💾 Stored document ID:', match[1]);",
+                  "        }",
+                  "    }",
+                  "} catch (e) {",
+                  "    console.log('⚠️ Could not extract document ID from response');",
+                  "}",
+                  "",
+                  "console.log('✅ Document inserted successfully');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"age\": 30,\n  \"email\": \"john.doe@example.com\",\n  \"createdAt\": \"2025-08-30T10:30:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/documents?dbName={{dbName}}&collectionName={{collectionName}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "documents"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "14. Insert Many Documents",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"name\": \"Alice Smith\",\n    \"age\": 25,\n    \"email\": \"alice@example.com\"\n  },\n  {\n    \"name\": \"Bob Johnson\",\n    \"age\": 35,\n    \"email\": \"bob@example.com\"\n  },\n  {\n    \"name\": \"Carol Wilson\",\n    \"age\": 28,\n    \"email\": \"carol@example.com\"\n  }\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/documents/many?dbName={{dbName}}&collectionName={{collectionName}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "documents",
+                "many"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "15. Update Document",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"$set\": {\n    \"age\": 31,\n    \"lastUpdated\": \"2025-08-30T10:35:00Z\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/documents?dbName={{dbName}}&collectionName={{collectionName}}&filter={\"name\": \"John Doe\"}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "documents"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "filter",
+                  "value": "%7B%22name%22%3A%20%22John%20Doe%22%7D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "16. Delete Document",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/documents?dbName={{dbName}}&collectionName={{collectionName}}&filter={\"name\": \"John Doe\"}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "documents"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "filter",
+                  "value": "%7B%22name%22%3A%20%22John%20Doe%22%7D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "17. Count Documents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/documents/count?dbName={{dbName}}&collectionName={{collectionName}}&filter=%7B%7D",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "documents",
+                "count"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "filter",
+                  "value": "%7B%7D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "18. Simple Query",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/query/simple?dbName={{dbName}}&collectionName={{collectionName}}&field=age&value=25",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "query",
+                "simple"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "field",
+                  "value": "age"
+                },
+                {
+                  "key": "value",
+                  "value": "25"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "19. Complex Query",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"age\": {\n    \"$gte\": 25,\n    \"$lte\": 35\n  },\n  \"email\": {\n    \"$regex\": \"@example.com$\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/query/complex?dbName={{dbName}}&collectionName={{collectionName}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "query",
+                "complex"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "20. List Indexes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/indexes/{{dbName}}/{{collectionName}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "indexes",
+                "{{dbName}}",
+                "{{collectionName}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "MongoAdvancedAnalyticsService Tools (12 endpoints)",
+      "item": [
+        {
+          "name": "21. Create Index",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/indexes?dbName={{dbName}}&collectionName={{collectionName}}&indexKeys={\"email\": 1}&indexOptions={\"unique\": true}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "indexes"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "indexKeys",
+                  "value": "%7B%22email%22%3A%201%7D"
+                },
+                {
+                  "key": "indexOptions",
+                  "value": "%7B%22unique%22%3A%20true%7D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "22. Drop Index",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/indexes?dbName={{dbName}}&collectionName={{collectionName}}&indexName=email_1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "indexes"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "indexName",
+                  "value": "email_1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "23. Reindex Collection",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/indexes/reindex?dbName={{dbName}}&collectionName={{collectionName}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "indexes",
+                "reindex"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "24. Create Vector Index",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/indexes/vector?dbName={{dbName}}&collectionName={{collectionName}}&field=embeddings&dimensionsStr=1536&similarity=cosine",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "indexes",
+                "vector"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "field",
+                  "value": "embeddings"
+                },
+                {
+                  "key": "dimensionsStr",
+                  "value": "1536"
+                },
+                {
+                  "key": "similarity",
+                  "value": "cosine"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "25. Aggregation Pipeline",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"$match\": {\n      \"age\": {\n        \"$gte\": 25\n      }\n    }\n  },\n  {\n    \"$group\": {\n      \"_id\": \"$age\",\n      \"count\": {\n        \"$sum\": 1\n      },\n      \"avgAge\": {\n        \"$avg\": \"$age\"\n      }\n    }\n  },\n  {\n    \"$sort\": {\n      \"count\": -1\n    }\n  }\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/aggregation?dbName={{dbName}}&collectionName={{collectionName}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "aggregation"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "26. Distinct Values",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/analysis/distinct?dbName={{dbName}}&collectionName={{collectionName}}&field=age&filter=%7B%7D",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "analysis",
+                "distinct"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "field",
+                  "value": "age"
+                },
+                {
+                  "key": "filter",
+                  "value": "%7B%7D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "27. Group By Field",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/analysis/group?dbName={{dbName}}&collectionName={{collectionName}}&groupField=age&accumulator={\"count\": {\"$sum\": 1}}&filter=%7B%7D",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "analysis",
+                "group"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "groupField",
+                  "value": "age"
+                },
+                {
+                  "key": "accumulator",
+                  "value": "%7B%22count%22%3A%20%7B%22%24sum%22%3A%201%7D%7D"
+                },
+                {
+                  "key": "filter",
+                  "value": "%7B%7D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "28. Text Search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/search/text?dbName={{dbName}}&collectionName={{collectionName}}&searchText=John&language=english&limitStr=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "search",
+                "text"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "searchText",
+                  "value": "John"
+                },
+                {
+                  "key": "language",
+                  "value": "english"
+                },
+                {
+                  "key": "limitStr",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "29. Geo Search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/search/geo?dbName={{dbName}}&collectionName={{collectionName}}&field=location&longitude=-74.006&latitude=40.7128&maxDistance=1000&limitStr=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "search",
+                "geo"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "field",
+                  "value": "location"
+                },
+                {
+                  "key": "longitude",
+                  "value": "-74.006"
+                },
+                {
+                  "key": "latitude",
+                  "value": "40.7128"
+                },
+                {
+                  "key": "maxDistance",
+                  "value": "1000"
+                },
+                {
+                  "key": "limitStr",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "30. Explain Query",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/query/explain?dbName={{dbName}}&collectionName={{collectionName}}&query={\"age\": {\"$gte\": 25}}&verbosity=executionStats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "query",
+                "explain"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "query",
+                  "value": "%7B%22age%22%3A%20%7B%22%24gte%22%3A%2025%7D%7D"
+                },
+                {
+                  "key": "verbosity",
+                  "value": "executionStats"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "31. Validate Schema",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"$jsonSchema\": {\n    \"bsonType\": \"object\",\n    \"required\": [\"name\", \"email\", \"age\"],\n    \"properties\": {\n      \"name\": {\n        \"bsonType\": \"string\",\n        \"description\": \"must be a string and is required\"\n      },\n      \"email\": {\n        \"bsonType\": \"string\",\n        \"pattern\": \"^.+@.+$\",\n        \"description\": \"must be a valid email address\"\n      },\n      \"age\": {\n        \"bsonType\": \"int\",\n        \"minimum\": 0,\n        \"maximum\": 150,\n        \"description\": \"must be an integer between 0 and 150\"\n      }\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/schema/validate?dbName={{dbName}}&collectionName={{collectionName}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "schema",
+                "validate"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "32. Repair Database",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/database/repair?dbName={{dbName}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "database",
+                "repair"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "MongoAIService Tools (7 endpoints)",
+      "item": [
+        {
+          "name": "33. AI Analyze Collection",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/ai/analyze/collection?dbName={{dbName}}&collectionName={{collectionName}}&analysisType=statistical&sampleSizeStr=100",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "ai",
+                "analyze",
+                "collection"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "analysisType",
+                  "value": "statistical"
+                },
+                {
+                  "key": "sampleSizeStr",
+                  "value": "100"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "34. AI Analyze Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/ai/analyze/document?dbName={{dbName}}&collectionName={{collectionName}}&documentId=64f1a2b3c4d5e6f7g8h9i0j1&analysisType=content&aiModel=gpt-4o-mini",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "ai",
+                "analyze",
+                "document"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "documentId",
+                  "value": "64f1a2b3c4d5e6f7g8h9i0j1"
+                },
+                {
+                  "key": "analysisType",
+                  "value": "content"
+                },
+                {
+                  "key": "aiModel",
+                  "value": "gpt-4o-mini"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "35. AI Document Summary",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/ai/summary?dbName={{dbName}}&collectionName={{collectionName}}&documentId=64f1a2b3c4d5e6f7g8h9i0j1&summaryType=detailed&maxLengthStr=1000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "ai",
+                "summary"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "documentId",
+                  "value": "64f1a2b3c4d5e6f7g8h9i0j1"
+                },
+                {
+                  "key": "summaryType",
+                  "value": "detailed"
+                },
+                {
+                  "key": "maxLengthStr",
+                  "value": "1000"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "36. AI Query Suggestion",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/ai/query/suggestion?dbName={{dbName}}&collectionName={{collectionName}}&userIntent=find all users older than 25&context={\"field_info\": {\"age\": \"integer\", \"name\": \"string\"}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "ai",
+                "query",
+                "suggestion"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "userIntent",
+                  "value": "find all users older than 25"
+                },
+                {
+                  "key": "context",
+                  "value": "%7B%22field_info%22%3A%20%7B%22age%22%3A%20%22integer%22%2C%20%22name%22%3A%20%22string%22%7D%7D"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "37. Generate Embeddings",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/ai/embeddings?dbName={{dbName}}&collectionName={{collectionName}}&textField=name&embeddingField=name_embedding&aiModel=text-embedding-ada-002&batchSizeStr=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "ai",
+                "embeddings"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "textField",
+                  "value": "name"
+                },
+                {
+                  "key": "embeddingField",
+                  "value": "name_embedding"
+                },
+                {
+                  "key": "aiModel",
+                  "value": "text-embedding-ada-002"
+                },
+                {
+                  "key": "batchSizeStr",
+                  "value": "50"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "38. Semantic Search",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/ai/search/semantic?dbName={{dbName}}&collectionName={{collectionName}}&naturalLanguageQuery=software developer with experience&limitStr=10&thresholdStr=0.8",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "ai",
+                "search",
+                "semantic"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "naturalLanguageQuery",
+                  "value": "software developer with experience"
+                },
+                {
+                  "key": "limitStr",
+                  "value": "10"
+                },
+                {
+                  "key": "thresholdStr",
+                  "value": "0.8"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "39. Vector Search",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mongo/ai/search/vector?dbName={{dbName}}&collectionName={{collectionName}}&vectorField=embeddings&limitStr=5&filter=%7B%7D",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mongo",
+                "ai",
+                "search",
+                "vector"
+              ],
+              "query": [
+                {
+                  "key": "dbName",
+                  "value": "%7B%7BdbName%7D%7D"
+                },
+                {
+                  "key": "collectionName",
+                  "value": "%7B%7BcollectionName%7D%7D"
+                },
+                {
+                  "key": "vectorField",
+                  "value": "embeddings"
+                },
+                {
+                  "key": "limitStr",
+                  "value": "5"
+                },
+                {
+                  "key": "filter",
+                  "value": "%7B%7D"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

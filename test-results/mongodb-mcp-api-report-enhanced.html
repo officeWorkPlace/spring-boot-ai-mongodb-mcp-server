@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB MCP API Test Report - Enhanced</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            --dark-color: #1f2937;
+            --light-gray: #f8fafc;
+            --border-color: #e5e7eb;
+            --text-muted: #6b7280;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #8b5cf6 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: var(--light-gray);
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.success { background: var(--success-color); }
+        .stat-icon.danger { background: var(--danger-color); }
+        .stat-icon.info { background: var(--info-color); }
+        .stat-icon.warning { background: var(--warning-color); }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--dark-color);
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .content-area {
+            padding: 30px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--border-color);
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .test-item {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .test-item:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .test-header {
+            padding: 20px 25px;
+            background: var(--light-gray);
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.3s ease;
+        }
+
+        .test-header:hover {
+            background: #f1f5f9;
+        }
+
+        .test-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .method-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .method-get { background: #dcfce7; color: #166534; }
+        .method-post { background: #fef3c7; color: #92400e; }
+        .method-put { background: #dbeafe; color: #1e40af; }
+        .method-delete { background: #fecaca; color: #991b1b; }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-error {
+            background: #fecaca;
+            color: #991b1b;
+        }
+
+        .test-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark-color);
+        }
+
+        .expand-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .test-item.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .test-content {
+            display: none;
+            padding: 25px;
+        }
+
+        .test-item.expanded .test-content {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .request-response-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .section {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--dark-color);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .info-value {
+            color: var(--dark-color);
+            word-break: break-all;
+        }
+
+        .url-link {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .url-link:hover {
+            text-decoration: underline;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            border: 1px solid #4a5568;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.3s ease;
+            z-index: 10;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 30px;
+            min-height: 30px;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .test-results {
+            margin-top: 20px;
+        }
+
+        .test-result-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .test-result-item.passed {
+            background: #dcfce7;
+            border-color: #bbf7d0;
+        }
+
+        .test-result-item.failed {
+            background: #fecaca;
+            border-color: #fca5a5;
+        }
+
+        .test-name-small {
+            font-weight: 500;
+        }
+
+        .test-status {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .test-status.passed {
+            color: #166534;
+        }
+
+        .test-status.failed {
+            color: #991b1b;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .performance-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .request-response-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                justify-content: center;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            body {
+                padding: 10px;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 🎯 Icon Toggle Switch Styles */
+        .format-toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .format-toggle {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .format-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "{}";
+            height: 24px;
+            width: 24px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: #6366f1;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .format-toggle input:checked + .toggle-slider {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .format-toggle input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+            content: "👤";
+            font-size: 12px;
+        }
+
+        .toggle-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .toggle-label.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* 📝 Human Readable Format Styles */
+        .human-readable {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1px solid #0ea5e9;
+            border-radius: 12px;
+            padding: 15px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .human-readable .summary-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #0369a1;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .human-readable .summary-content {
+            color: #1e40af;
+            line-height: 1.6;
+        }
+
+        .human-readable .summary-item {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .human-readable .summary-item:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-database"></i> MongoDB MCP API Test Report</h1>
+                <p>Comprehensive API testing results with detailed request/response analysis</p>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon success">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="stat-number" id="total-tests">39</div>
+                <div class="stat-label">Total Tests</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-number" id="passed-tests">52</div>
+                <div class="stat-label">Passed Assertions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon danger">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="stat-number" id="failed-tests">34</div>
+                <div class="stat-label">Failed Assertions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon info">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <div class="stat-number" id="success-rate">60.5%</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Search -->
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search tests by name or endpoint...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fas fa-list"></i> All Tests
+                </button>
+                <button class="filter-btn" data-filter="passed">
+                    <i class="fas fa-check"></i> Passed Only
+                </button>
+                <button class="filter-btn" data-filter="failed">
+                    <i class="fas fa-times"></i> Failed Only
+                </button>
+                <button class="filter-btn" data-filter="get">
+                    <i class="fas fa-download"></i> GET
+                </button>
+                <button class="filter-btn" data-filter="post">
+                    <i class="fas fa-plus"></i> POST
+                </button>
+                <button class="filter-btn" data-filter="put">
+                    <i class="fas fa-edit"></i> PUT
+                </button>
+                <button class="filter-btn" data-filter="delete">
+                    <i class="fas fa-trash"></i> DELETE
+                </button>
+            </div>
+
+            <!-- Test Results -->
+            <div id="test-results">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <script>
+        // Test data - This would normally come from your test results JSON
+        const testData = [
+            {
+                id: "ping-test",
+                name: "01. Ping MongoDB Connection",
+                method: "GET",
+                url: "http://localhost:8080/api/mongo/ping",
+                status: 200,
+                passed: true,
+                responseTime: 89,
+                responseSize: "14B",
+                tests: [
+                    { name: "Response status should be successful", passed: true },
+                    { name: "Response time should be reasonable", passed: true },
+                    { name: "Ping response should be successful", passed: true },
+                    { name: "Response should contain success message", passed: true }
+                ],
+                request: {
+                    headers: {
+                        "Authorization": "Basic YWRtaW46YWRtaW4=",
+                        "User-Agent": "Newman/5.x"
+                    },
+                    body: null
+                },
+                response: {
+                    headers: {
+                        "Content-Type": "text/plain;charset=UTF-8",
+                        "Content-Length": "14"
+                    },
+                    body: "MongoDB is up!"
+                }
+            },
+            {
+                id: "list-databases",
+                name: "02. List All Databases",
+                method: "GET",
+                url: "http://localhost:8080/api/mongo/databases",
+                status: 200,
+                passed: true,
+                responseTime: 115,
+                responseSize: "202B",
+                tests: [
+                    { name: "Response status should be successful", passed: true },
+                    { name: "Response time should be reasonable", passed: true },
+                    { name: "List databases response should be successful", passed: true },
+                    { name: "Response should be an array", passed: true }
+                ],
+                request: {
+                    headers: {
+                        "Authorization": "Basic YWRtaW46YWRtaW4=",
+                        "User-Agent": "Newman/5.x"
+                    },
+                    body: null
+                },
+                response: {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Content-Length": "202"
+                    },
+                    body: [
+                        { "name": "admin", "sizeOnDisk": 40960, "empty": false },
+                        { "name": "config", "sizeOnDisk": 36864, "empty": false },
+                        { "name": "local", "sizeOnDisk": 40960, "empty": false },
+                        { "name": "mcpserver", "sizeOnDisk": 40960, "empty": false }
+                    ]
+                }
+            },
+            {
+                id: "create-database",
+                name: "03. Create Database",
+                method: "POST",
+                url: "http://localhost:8080/api/mongo/databases?dbName=testDB_764&options={}",
+                status: 400,
+                passed: false,
+                responseTime: 6,
+                responseSize: "435B",
+                tests: [
+                    { name: "Response status should be successful", passed: false },
+                    { name: "Response time should be reasonable", passed: true },
+                    { name: "Create database response should be successful", passed: false },
+                    { name: "Database creation should return success message", passed: false }
+                ],
+                request: {
+                    headers: {
+                        "User-Agent": "Newman/5.x"
+                    },
+                    query: {
+                        "dbName": "testDB_764",
+                        "options": "{}"
+                    },
+                    body: null
+                },
+                response: {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Content-Length": "435"
+                    },
+                    body: {
+                        "timestamp": "2025-08-30T14:30:15.123+00:00",
+                        "status": 400,
+                        "error": "Bad Request",
+                        "message": "Required request header 'Authorization' for method parameter type String is not present",
+                        "path": "/api/mongo/databases"
+                    }
+                }
+            },
+            {
+                id: "drop-database",
+                name: "04. Drop Database",
+                method: "DELETE",
+                url: "http://localhost:8080/api/mongo/databases/testDB_562",
+                status: 401,
+                passed: false,
+                responseTime: 35,
+                responseSize: "0B",
+                tests: [
+                    { name: "Response status should be successful", passed: false },
+                    { name: "Response time should be reasonable", passed: true }
+                ],
+                request: {
+                    headers: {
+                        "User-Agent": "Newman/5.x"
+                    },
+                    body: null
+                },
+                response: {
+                    status: 401,
+                    statusText: "Unauthorized",
+                    headers: {},
+                    body: ""
+                }
+            }
+        ];
+
+        let filteredData = [...testData];
+        let currentFilter = 'all';
+
+        function initializeApp() {
+            renderTestResults();
+            setupEventListeners();
+            updateStatistics();
+        }
+
+        function setupEventListeners() {
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    e.target.closest('.filter-btn').classList.add('active');
+                    currentFilter = e.target.closest('.filter-btn').dataset.filter;
+                    applyFilters();
+                });
+            });
+
+            // Search
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                applyFilters();
+            });
+
+            // Test item expansion
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.test-header')) {
+                    const testItem = e.target.closest('.test-item');
+                    testItem.classList.toggle('expanded');
+                }
+            });
+
+            // Copy buttons
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('copy-btn')) {
+                    const codeBlock = e.target.closest('.code-block');
+                    const jsonContent = codeBlock.querySelector('.json-content code');
+                    
+                    if (jsonContent) {
+                        navigator.clipboard.writeText(jsonContent.innerText);
+                        e.target.innerHTML = '<i class="fas fa-check"></i>';
+                        setTimeout(() => {
+                            e.target.innerHTML = '<i class="fas fa-copy"></i>';
+                        }, 2000);
+                    }
+                }
+            });
+        }
+
+        // Copy functionality for code blocks
+        document.addEventListener('click', function(e) {
+            const copyBtn = e.target.closest('.copy-btn');
+            if (copyBtn) {
+                const codeBlock = copyBtn.nextElementSibling || copyBtn.parentElement.querySelector('pre code, .json-content');
+                const textToCopy = codeBlock ? codeBlock.textContent || codeBlock.innerText : '';
+                
+                if (textToCopy) {
+                    // Use modern clipboard API if available
+                    if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard.writeText(textToCopy).then(() => {
+                            copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                            setTimeout(() => {
+                                copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                            }, 1000);
+                        }).catch(err => {
+                            console.error('Failed to copy: ', err);
+                            fallbackCopy(textToCopy, copyBtn);
+                        });
+                    } else {
+                        fallbackCopy(textToCopy, copyBtn);
+                    }
+                }
+            }
+        });
+
+        // Fallback copy method for older browsers
+        function fallbackCopy(text, button) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    button.innerHTML = '<i class="fas fa-check"></i>';
+                    setTimeout(() => {
+                        button.innerHTML = '<i class="fas fa-copy"></i>';
+                    }, 1000);
+                }
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // Toggle view mode functionality for human-readable button
+        function toggleViewMode(button) {
+            const currentMode = button.getAttribute('data-current');
+            const testIndex = button.getAttribute('data-test-index');
+            const type = button.getAttribute('data-type');
+            
+            const codeBlock = button.closest('.code-block');
+            const jsonContent = codeBlock.querySelector('.json-content');
+            const humanContent = codeBlock.querySelector('.human-readable-content');
+            
+            if (currentMode === 'json') {
+                // Switch to human-readable
+                button.setAttribute('data-current', 'human');
+                button.innerHTML = '<i class="fas fa-user"></i> Human';
+                
+                jsonContent.classList.add('hidden');
+                humanContent.classList.add('active');
+                
+                // Generate human-readable content if not already done
+                if (!humanContent.hasAttribute('data-generated')) {
+                    generateHumanReadableContent(humanContent, jsonContent, type);
+                    humanContent.setAttribute('data-generated', 'true');
+                }
+            } else {
+                // Switch to JSON
+                button.setAttribute('data-current', 'json');
+                button.innerHTML = '<i class="fas fa-code"></i> JSON';
+                
+                jsonContent.classList.remove('hidden');
+                humanContent.classList.remove('active');
+            }
+        }
+        
+        function generateHumanReadableContent(humanContainer, jsonContainer, type) {
+            const jsonText = jsonContainer.querySelector('code').innerText;
+            let parsedData;
+            
+            try {
+                parsedData = JSON.parse(jsonText);
+            } catch (e) {
+                humanContainer.innerHTML = '<p class="text-muted">Unable to parse JSON content for human-readable display.</p>';
+                return;
+            }
+            
+            let humanReadableHtml = '';
+            
+            if (type === 'request') {
+                humanReadableHtml = generateRequestHumanReadable(parsedData);
+            } else if (type === 'response') {
+                humanReadableHtml = generateResponseHumanReadable(parsedData);
+            } else if (type === 'response-headers') {
+                humanReadableHtml = generateHeadersHumanReadable(parsedData);
+            } else {
+                humanReadableHtml = generateGenericHumanReadable(parsedData);
+            }
+            
+            humanContainer.innerHTML = humanReadableHtml;
+        }
+        
+        function generateRequestHumanReadable(data) {
+            let html = '<h5>Request Details</h5>';
+            
+            if (data.dbName) {
+                html += '<div class="field-group"><div class="field-label">Database:</div><div class="field-value">' + escapeHtml(data.dbName) + '</div></div>';
+            }
+            
+            if (data.collectionName) {
+                html += '<div class="field-group"><div class="field-label">Collection:</div><div class="field-value">' + escapeHtml(data.collectionName) + '</div></div>';
+            }
+            
+            if (data.jsonQuery) {
+                html += '<div class="field-group"><div class="field-label">Query:</div><div class="field-value">' + escapeHtml(data.jsonQuery) + '</div></div>';
+            }
+            
+            if (data.jsonDocument) {
+                html += '<div class="field-group"><div class="field-label">Document:</div><div class="field-value">' + escapeHtml(data.jsonDocument) + '</div></div>';
+            }
+            
+            if (data.field) {
+                html += '<div class="field-group"><div class="field-label">Field:</div><div class="field-value">' + escapeHtml(data.field) + '</div></div>';
+            }
+            
+            // Add any additional fields
+            Object.keys(data).forEach(key => {
+                if (!['dbName', 'collectionName', 'jsonQuery', 'jsonDocument', 'field'].includes(key)) {
+                    html += '<div class="field-group"><div class="field-label">' + escapeHtml(key) + ':</div><div class="field-value">' + escapeHtml(typeof data[key] === 'object' ? JSON.stringify(data[key], null, 2) : data[key]) + '</div></div>';
+                }
+            });
+            
+            return html;
+        }
+        
+        function generateResponseHumanReadable(data) {
+            let html = '<h5>Response Details</h5>';
+            
+            if (typeof data === 'string') {
+                html += '<div class="field-group"><div class="field-label">Message:</div><div class="field-value">' + escapeHtml(data) + '</div></div>';
+            } else if (Array.isArray(data)) {
+                html += '<div class="field-group"><div class="field-label">Results (' + data.length + ' items):</div>';
+                data.forEach((item, index) => {
+                    html += '<div class="field-value"><strong>Item ' + (index + 1) + ':</strong><br>' + escapeHtml(typeof item === 'object' ? JSON.stringify(item, null, 2) : item) + '</div>';
+                });
+                html += '</div>';
+            } else if (typeof data === 'object') {
+                Object.keys(data).forEach(key => {
+                    html += '<div class="field-group"><div class="field-label">' + escapeHtml(key) + ':</div><div class="field-value">' + escapeHtml(typeof data[key] === 'object' ? JSON.stringify(data[key], null, 2) : data[key]) + '</div></div>';
+                });
+            } else {
+                html += '<div class="field-group"><div class="field-label">Value:</div><div class="field-value">' + escapeHtml(data) + '</div></div>';
+            }
+            
+            return html;
+        }
+        
+        function generateHeadersHumanReadable(data) {
+            let html = '<h5>Headers</h5>';
+            
+            Object.keys(data).forEach(key => {
+                html += '<div class="field-group"><div class="field-label">' + escapeHtml(key) + ':</div><div class="field-value">' + escapeHtml(data[key]) + '</div></div>';
+            });
+            
+            return html;
+        }
+        
+        function generateGenericHumanReadable(data) {
+            let html = '<h5>Content</h5>';
+            
+            if (typeof data === 'object') {
+                Object.keys(data).forEach(key => {
+                    html += '<div class="field-group"><div class="field-label">' + escapeHtml(key) + ':</div><div class="field-value">' + escapeHtml(typeof data[key] === 'object' ? JSON.stringify(data[key], null, 2) : data[key]) + '</div></div>';
+                });
+            } else {
+                html += '<div class="field-group"><div class="field-label">Value:</div><div class="field-value">' + escapeHtml(data) + '</div></div>';
+            }
+            
+            return html;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            filteredData = testData.filter(test => {
+                // Search filter
+                const matchesSearch = !searchTerm || 
+                    test.name.toLowerCase().includes(searchTerm) ||
+                    test.url.toLowerCase().includes(searchTerm);
+
+                // Status filter
+                const matchesFilter = 
+                    currentFilter === 'all' ||
+                    (currentFilter === 'passed' && test.passed) ||
+                    (currentFilter === 'failed' && !test.passed) ||
+                    (currentFilter === test.method.toLowerCase());
+
+                return matchesSearch && matchesFilter;
+            });
+
+            renderTestResults();
+        }
+
+        function renderTestResults() {
+            const container = document.getElementById('test-results');
+            
+            if (filteredData.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>No tests found</h3>
+                        <p>Try adjusting your search terms or filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredData.map((test, testIndex) => `
+                <div class="test-item" data-test-id="${test.id}">
+                    <div class="test-header">
+                        <div class="test-title">
+                            <span class="method-badge method-${test.method.toLowerCase()}">${test.method}</span>
+                            <span class="test-name">${test.name}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <span class="status-badge ${test.passed ? 'status-success' : 'status-error'}">
+                                <i class="fas fa-${test.passed ? 'check' : 'times'}"></i>
+                                ${test.status}
+                            </span>
+                            <i class="fas fa-chevron-down expand-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="test-content">
+                        <div class="performance-metrics">
+                            <div class="metric">
+                                <div class="metric-value">${test.responseTime}ms</div>
+                                <div class="metric-label">Response Time</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">${test.responseSize}</div>
+                                <div class="metric-label">Response Size</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">${test.tests.filter(t => t.passed).length}/${test.tests.length}</div>
+                                <div class="metric-label">Tests Passed</div>
+                            </div>
+                        </div>
+
+                        <div class="request-response-grid">
+                            <div class="section">
+                                <div class="section-title">
+                                    <i class="fas fa-arrow-up text-primary"></i>
+                                    Request Details
+                                </div>
+                                <div class="info-grid">
+                                    <span class="info-label">Method:</span>
+                                    <span class="info-value">${test.method}</span>
+                                    <span class="info-label">URL:</span>
+                                    <span class="info-value">
+                                        <a href="${test.url}" target="_blank" class="url-link">${test.url}</a>
+                                    </span>
+                                </div>
+                                
+                                ${test.request.headers ? `
+                                    <h6><i class="fas fa-list"></i> Headers</h6>
+                                    <div class="code-block">
+                                        <button class="copy-btn"><i class="fas fa-copy"></i></button>
+                                        <code>${JSON.stringify(test.request.headers, null, 2)}</code>
+                                    </div>
+                                ` : ''}
+                                
+                                ${test.request.body ? `
+                                    <h6><i class="fas fa-file-code"></i> Request Body</h6>
+                                    <div class="code-block">
+                                        <button class="copy-btn"><i class="fas fa-copy"></i></button>
+                                        <code>${typeof test.request.body === 'string' ? test.request.body : JSON.stringify(test.request.body, null, 2)}</code>
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                            <div class="section">
+                                <div class="section-title">
+                                    <i class="fas fa-arrow-down text-success"></i>
+                                    Response Details
+                                </div>
+                                <div class="info-grid">
+                                    <span class="info-label">Status:</span>
+                                    <span class="info-value">
+                                        <span class="status-badge ${test.passed ? 'status-success' : 'status-error'}">
+                                            ${test.status}
+                                        </span>
+                                    </span>
+                                    <span class="info-label">Size:</span>
+                                    <span class="info-value">${test.responseSize}</span>
+                                    <span class="info-label">Time:</span>
+                                    <span class="info-value">${test.responseTime}ms</span>
+                                </div>
+                                
+                                ${test.response.headers ? `
+                                    <h6><i class="fas fa-list"></i> Response Headers</h6>
+                                    <div class="code-block">
+                                        <button class="copy-btn"><i class="fas fa-copy"></i></button>
+                                        <code>${JSON.stringify(test.response.headers, null, 2)}</code>
+                                    </div>
+                                ` : ''}
+                                
+                                ${test.response.body ? `
+                                    <h6><i class="fas fa-file-code"></i> Response Body</h6>
+                                    <div class="code-block">
+                                        <button class="copy-btn"><i class="fas fa-copy"></i></button>
+                                        <code>${typeof test.response.body === 'string' ? test.response.body : JSON.stringify(test.response.body, null, 2)}</code>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <div class="test-results">
+                            <h6><i class="fas fa-tasks"></i> Test Assertions</h6>
+                            ${test.tests.map(testResult => `
+                                <div class="test-result-item ${testResult.passed ? 'passed' : 'failed'}">
+                                    <span class="test-name-small">${testResult.name}</span>
+                                    <span class="test-status ${testResult.passed ? 'passed' : 'failed'}">
+                                        <i class="fas fa-${testResult.passed ? 'check' : 'times'}"></i>
+                                        ${testResult.passed ? 'PASS' : 'FAIL'}
+                                    </span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStatistics() {
+            const totalTests = testData.length;
+            const totalAssertions = testData.reduce((sum, test) => sum + test.tests.length, 0);
+            const passedAssertions = testData.reduce((sum, test) => sum + test.tests.filter(t => t.passed).length, 0);
+            const failedAssertions = totalAssertions - passedAssertions;
+            const successRate = ((passedAssertions / totalAssertions) * 100).toFixed(1);
+
+            document.getElementById('total-tests').textContent = totalTests;
+            document.getElementById('passed-tests').textContent = passedAssertions;
+            document.getElementById('failed-tests').textContent = failedAssertions;
+            document.getElementById('success-rate').textContent = successRate + '%';
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            initializeToggleSwitches();
+        });
+
+        // Initialize toggle switches and populate human-readable content
+        function initializeToggleSwitches() {
+            // Generate human-readable content for all tests
+            testData.forEach((test, testIndex) => {
+                // Request body summary
+                const requestSummaryElements = document.querySelectorAll(`[data-summary-type="request"][data-test-index="${testIndex}"]`);
+                requestSummaryElements.forEach(element => {
+                    if (test.request && test.request.body) {
+                        element.innerHTML = generateHumanReadableSummary(test.request.body);
+                    } else {
+                        element.innerHTML = '<div class="summary-item">📭 No request body data</div>';
+                    }
+                });
+                
+                // Response body summary
+                const responseSummaryElements = document.querySelectorAll(`[data-summary-type="response"][data-test-index="${testIndex}"]`);
+                responseSummaryElements.forEach(element => {
+                    if (test.response && test.response.body) {
+                        element.innerHTML = generateHumanReadableSummary(test.response.body);
+                    } else {
+                        element.innerHTML = '<div class="summary-item">📭 No response body data</div>';
+                    }
+                });
+            });
+        }
+
+        // 🎯 Toggle Switch Functions for Format Switching
+        function toggleDataFormat(toggleElement) {
+            const testIndex = toggleElement.getAttribute('data-test-index');
+            const isRequest = toggleElement.classList.contains('request-toggle');
+            
+            // Find the container - look for the nearest parent that contains the toggle and body content
+            const testItem = toggleElement.closest('.test-item');
+            if (!testItem) return;
+            
+            let container;
+            if (isRequest) {
+                container = testItem.querySelector('.body-container[data-test-index="' + testIndex + '"] .summary-content[data-summary-type="request"]');
+            } else {
+                container = testItem.querySelector('.body-container[data-test-index="' + testIndex + '"] .summary-content[data-summary-type="response"]');
+            }
+            
+            const bodyContainer = container ? container.closest('.body-container') : null;
+            if (!bodyContainer) return;
+            
+            const isHumanReadable = toggleElement.checked; // checked = Human, unchecked = JSON
+            
+            // Update toggle labels
+            const jsonLabel = toggleElement.closest('.format-toggle-container').querySelector('.toggle-label:first-child');
+            const humanLabel = toggleElement.closest('.format-toggle-container').querySelector('.toggle-label:last-child');
+            
+            if (isHumanReadable) {
+                jsonLabel.classList.remove('active');
+                humanLabel.classList.add('active');
+                // Show human-readable, hide JSON
+                const codeBlock = bodyContainer.querySelector('.code-block');
+                const humanBlock = bodyContainer.querySelector('.human-readable');
+                if (codeBlock) codeBlock.style.display = 'none';
+                if (humanBlock) humanBlock.style.display = 'block';
+            } else {
+                jsonLabel.classList.add('active');
+                humanLabel.classList.remove('active');
+                // Show JSON, hide human-readable
+                const codeBlock = bodyContainer.querySelector('.code-block');
+                const humanBlock = bodyContainer.querySelector('.human-readable');
+                if (codeBlock) codeBlock.style.display = 'block';
+                if (humanBlock) humanBlock.style.display = 'none';
+            }
+        }
+
+        // 📝 Generate Human-Readable Summary
+        function generateHumanReadableSummary(data) {
+            if (!data) return '<div class="summary-item">📭 No data available</div>';
+            
+            let summary = '';
+            
+            if (typeof data === 'string') {
+                // Handle string responses
+                if (data.toLowerCase().includes('error') || data.toLowerCase().includes('failed')) {
+                    summary = `<div class="summary-item">❌ Error: ${data}</div>`;
+                } else if (data.toLowerCase().includes('success') || data.toLowerCase().includes('completed')) {
+                    summary = `<div class="summary-item">✅ Success: ${data}</div>`;
+                } else {
+                    summary = `<div class="summary-item">📝 Text Response: ${data.length > 100 ? data.substring(0, 100) + '...' : data}</div>`;
+                }
+            } else if (Array.isArray(data)) {
+                // Handle array responses
+                summary = `
+                    <div class="summary-item">📋 Data Type: Array</div>
+                    <div class="summary-item">🔢 Items Count: ${data.length}</div>
+                    <div class="summary-item">📊 Content: ${data.length === 0 ? 'Empty array' : 'List of ' + (typeof data[0] === 'object' ? 'objects' : typeof data[0] + 's')}</div>
+                `;
+            } else if (typeof data === 'object') {
+                // Handle object responses
+                const keys = Object.keys(data);
+                const hasError = keys.some(key => key.toLowerCase().includes('error')) || 
+                                (data.error !== undefined);
+                
+                if (hasError) {
+                    summary = `
+                        <div class="summary-item">❌ Error Response</div>
+                        <div class="summary-item">🔍 Error Details: ${data.error || data.message || 'Unknown error'}</div>
+                    `;
+                } else {
+                    summary = `
+                        <div class="summary-item">📦 Data Type: Object</div>
+                        <div class="summary-item">🔢 Properties: ${keys.length} items</div>
+                        <div class="summary-item">🏷️ Key Fields: ${keys.slice(0, 3).join(', ')}${keys.length > 3 ? '...' : ''}</div>
+                    `;
+                }
+            } else {
+                // Handle primitive types
+                summary = `
+                    <div class="summary-item">📄 Data Type: ${typeof data}</div>
+                    <div class="summary-item">📝 Value: ${String(data)}</div>
+                `;
+            }
+            
+            return summary;
+        }
+    </script>
+</body>
+</html>

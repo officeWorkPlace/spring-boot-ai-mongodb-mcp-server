@@ -1,0 +1,119 @@
+{
+  "id": "mongodb-mcp-server-automation",
+  "name": "MongoDB MCP Server - One Click Test Runner",
+  "description": "Automated test runner configuration for complete MongoDB MCP Server API validation",
+  "version": "1.0.0",
+  "runner": {
+    "type": "newman",
+    "environment": {
+      "name": "MongoDB MCP Server Test Environment",
+      "values": [
+        {
+          "key": "baseUrl",
+          "value": "http://localhost:8080",
+          "enabled": true
+        },
+        {
+          "key": "dbName",
+          "value": "autotest_{{$timestamp}}",
+          "enabled": true
+        },
+        {
+          "key": "collectionName",
+          "value": "collection_{{$randomInt}}",
+          "enabled": true
+        }
+      ]
+    },
+    "options": {
+      "iterationCount": 1,
+      "delayRequest": 500,
+      "timeout": {
+        "request": 10000,
+        "script": 5000
+      },
+      "reporters": ["cli", "json", "html"],
+      "reporter": {
+        "html": {
+          "export": "./test-results/mongodb-mcp-api-test-report.html"
+        },
+        "json": {
+          "export": "./test-results/mongodb-mcp-api-test-results.json"
+        }
+      }
+    }
+  },
+  "prerequisites": {
+    "services": [
+      {
+        "name": "MongoDB",
+        "url": "mongodb://localhost:27017",
+        "health_check": "db.adminCommand('ping')"
+      },
+      {
+        "name": "Spring Boot Application",
+        "url": "http://localhost:8080",
+        "health_check": "GET /api/mongo/ping"
+      }
+    ],
+    "environment_setup": {
+      "steps": [
+        "1. Start MongoDB service (default port 27017)",
+        "2. Start Spring Boot application (mvn spring-boot:run)",
+        "3. Verify connectivity with ping endpoint",
+        "4. Run collection with Newman or Postman Runner"
+      ]
+    }
+  },
+  "execution_order": {
+    "sequential": true,
+    "phases": [
+      {
+        "name": "Phase 1: Connection & Setup",
+        "tests": ["01. Ping MongoDB Connection", "02. List All Databases", "03. Create Database"]
+      },
+      {
+        "name": "Phase 2: Collection Management", 
+        "tests": ["04. Create Collection", "05. List Collections", "06. Get Collection Stats"]
+      },
+      {
+        "name": "Phase 3: Document Operations",
+        "tests": ["07. Insert Document", "08. Insert Many Documents", "09. Find Documents", "10. Update Document"]
+      },
+      {
+        "name": "Phase 4: Query Operations",
+        "tests": ["11. Simple Query", "12. Complex Query", "13. Count Documents", "14. Aggregation Pipeline"]
+      },
+      {
+        "name": "Phase 5: Index Management",
+        "tests": ["15. Create Index", "16. List Indexes", "17. Create Vector Index", "18. Drop Index"]
+      },
+      {
+        "name": "Phase 6: Advanced Analytics",
+        "tests": ["19. Distinct Values", "20. Group By Field", "21. Text Search", "22. Explain Query"]
+      },
+      {
+        "name": "Phase 7: AI Operations",
+        "tests": ["23. AI Analyze Collection", "24. Generate Embeddings", "25. Semantic Search", "26. Vector Search"]
+      },
+      {
+        "name": "Phase 8: Cleanup",
+        "tests": ["37. Drop Collection", "38. Drop Database"]
+      }
+    ]
+  },
+  "validation_rules": {
+    "response_time": {
+      "max_average": 3000,
+      "max_individual": 10000
+    },
+    "success_rate": {
+      "minimum": 95
+    },
+    "data_integrity": {
+      "verify_inserts": true,
+      "verify_updates": true,
+      "verify_deletes": true
+    }
+  }
+}
