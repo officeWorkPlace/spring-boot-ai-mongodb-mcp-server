@@ -6,40 +6,40 @@
 [![MCP 1.0](https://img.shields.io/badge/MCP-1.0-blue.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A production-ready Spring Boot application implementing the Model Context Protocol (MCP) server with comprehensive MongoDB operations and AI-powered features. This server provides 45+ specialized tools for database management, analytics, and intelligent data processing.
+A production-ready Spring Boot application implementing the Model Context Protocol (MCP) server with comprehensive MongoDB operations and AI-powered features. This server provides **41 specialized tools** across 3 service classes for database management, analytics, and intelligent data processing.
 
 ## 🚀 Features
 
 ### Core Capabilities
-- **45+ MCP Tools**: Comprehensive MongoDB operations across three specialized service categories
-- **Java 17 Compatible**: Optimized for Java 17 with G1GC performance tuning
-- **Production Ready**: Docker, Kubernetes, monitoring, and security configurations
-- **AI Integration**: OpenAI GPT-4 and Ollama local model support with vector search
-- **Real-time Analytics**: Advanced aggregation pipelines and query optimization
-- **Security**: OAuth2 JWT authentication with role-based access control
+- **41 MCP Tools**: Comprehensive MongoDB operations across three specialized service categories
+- **Java 17 Compatible**: Optimized for Java 17 with Spring Boot 3.4.5
+- **Production Ready**: Docker, security, monitoring, and testing configurations
+- **Spring AI Integration**: Built with Spring AI MCP Server starter (v1.0.0-M7)
+- **Real-time Operations**: Advanced aggregation pipelines and query optimization
+- **Security**: Spring Security with basic authentication and role-based access control
 
 ### MCP Tool Categories
 
-#### 🗄️ Core Database Operations (MongoServiceClient - 21 Tools)
+#### 🗄️ Core Database Operations (MongoServiceClient - 22 Tools)
 - **Database Management**: Create, drop, list databases with statistics
 - **Collection Operations**: CRUD operations, indexing, schema validation
-- **Document Management**: Insert, update, delete, bulk operations with transactions
+- **Document Management**: Insert, update, delete, bulk operations
 - **Query Operations**: Find, count, distinct with advanced filtering
 - **Administrative Tools**: Database stats, collection info, connection management
 
-#### 📊 Advanced Analytics & Administration (MongoAdvancedAnalyticsService - 15 Tools)
+#### 📊 Advanced Analytics & Administration (MongoAdvancedAnalyticsService - 12 Tools)
 - **Aggregation Pipelines**: Complex data transformations and analysis
 - **Index Management**: Create, optimize, and analyze database indexes
 - **Performance Monitoring**: Query performance analysis and optimization
-- **Data Migration**: Import/export tools with transformation capabilities
-- **Administrative Operations**: Backup, restore, and maintenance utilities
+- **Search Operations**: Text search, geospatial queries, and schema validation
+- **Administrative Operations**: Database maintenance and repair utilities
 
-#### 🤖 AI-Powered Operations (MongoAIService - 10 Tools)
+#### 🤖 AI-Powered Operations (MongoAIService - 7 Tools)
 - **Vector Search**: Semantic search with embedding generation
-- **Content Generation**: AI-powered document creation and enhancement
-- **Data Analysis**: Intelligent pattern recognition and insights
-- **Natural Language Queries**: Convert text to MongoDB queries
-- **Recommendation Systems**: Content-based and collaborative filtering
+- **Content Analysis**: AI-powered document insights and pattern recognition
+- **Data Analysis**: Intelligent collection structure analysis
+- **Natural Language Queries**: Semantic search across collections
+- **AI-Enhanced Operations**: Document summarization and query suggestions
 
 ## 🏗️ Architecture
 
@@ -54,15 +54,45 @@ src/main/java/com/deepai/
     └── MongoAIService.java                       # AI-powered features (10 tools)
 ```
 
+## 🔧 Maven Project Information
+
+```xml
+<groupId>com.deepai</groupId>
+<artifactId>spring-boot-ai-mongo-mcp-server</artifactId>
+<version>0.0.1-SNAPSHOT</version>
+<packaging>jar</packaging>
+```
+
+**Built JAR:** `target/spring-boot-ai-mongo-mcp-server-0.0.1-SNAPSHOT.jar`
+
+### Maven Profiles
+- **`dev`** - Development profile with debug logging
+- **`prod`** - Production profile with optimized settings
+- **`test`** - Testing profile with embedded MongoDB
+- **`integration-test`** - Integration testing with Docker
+- **`performance-test`** - Performance testing profile
+
 ## 📋 Prerequisites
 
 - **Java 17** or higher
 - **MongoDB 7.0+** (local or cloud instance)
-- **Gradle 8.11+** (or use included wrapper)
+- **Maven 3.6+** (or use included wrapper)
 
-### Optional AI Services
-- **OpenAI API Key** (for GPT-4 integration)
-- **Ollama** (for local AI model support)
+### Dependencies
+- **Spring Boot**: 3.4.5 (Latest stable release)
+- **Spring AI MCP Server**: 1.0.0-M7 (MCP Protocol implementation)
+- **Spring Data MongoDB**: Latest stable for database operations
+- **Spring Security**: Basic authentication support
+- **Spring Boot Actuator**: Health monitoring and metrics
+- **MongoDB Java Driver**: Official MongoDB connectivity
+- **Java**: 17+ (LTS version)
+- **Maven**: 3.6+ (Build automation)
+
+### Optional Configuration
+- **MongoDB URI**: Default `mongodb://localhost:27017/mcpserver`
+- **Basic Auth**: Default admin/admin credentials
+- **Docker**: For containerization support
+- **Testcontainers**: Integration testing with embedded MongoDB
 
 ## 🚀 Quick Start
 
@@ -73,49 +103,76 @@ cd spring-boot-ai-mongodb-mcp-server
 ```
 
 ### 2. Configure Environment
-Create `.env` file in the project root:
+Create `.env` file in the project root or set environment variables:
 ```env
 # MongoDB Configuration
-SPRING_DATA_MONGODB_URI=mongodb://localhost:27017/mcpdb
-MONGO_DATABASE=mcpdb
+MONGODB_URI=mongodb://localhost:27017/mcpserver
+SPRING_DATA_MONGODB_URI=mongodb://localhost:27017/mcpserver
+SPRING_DATA_MONGODB_DATABASE=mcpserver
 
-# AI Configuration (Optional)
-OPENAI_API_KEY=your_openai_api_key_here
-OLLAMA_BASE_URL=http://localhost:11434
+# MCP Server Configuration
+SPRING_AI_MCP_SERVER_NAME=mongo-mcp-server
+SPRING_AI_MCP_SERVER_VERSION=0.0.1
+
+# Optional AI Configuration
+# SPRING_AI_OPENAI_API_KEY=your_openai_api_key_here
 
 # Server Configuration
 SERVER_PORT=8080
-SPRING_PROFILES_ACTIVE=prod
+
+# Security Configuration (Basic Auth)
+SPRING_SECURITY_USER_NAME=admin
+SPRING_SECURITY_USER_PASSWORD=admin
 
 # Logging
-LOGGING_LEVEL_ROOT=INFO
-LOGGING_LEVEL_COM_DEEPAI=INFO
+LOGGING_FILE_NAME=./logs/spring-boot-ai-mongo-mcp-server.log
 ```
 
 ### 3. Build and Run
 
-#### Using Gradle Wrapper
+#### Using Maven Wrapper
 ```bash
-# Build the application
-./gradlew build
+# Build the application (Linux/Mac)
+./mvnw clean compile
 
-# Run the application
-./gradlew bootRun
+# Build the application (Windows)
+mvnw.cmd clean compile
+
+# Run the application (Linux/Mac)
+./mvnw spring-boot:run
+
+# Run the application (Windows)
+mvnw.cmd spring-boot:run
+
+# Build and run tests
+./mvnw clean install    # Linux/Mac
+mvnw.cmd clean install  # Windows
+
+# Skip tests during build
+./mvnw clean package -DskipTests    # Linux/Mac
+mvnw.cmd clean package -DskipTests  # Windows
+
+# Run with specific profile
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev    # Linux/Mac
+mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=dev  # Windows
 ```
 
 #### Using JAR
 ```bash
 # Build JAR
-./gradlew bootJar
+./mvnw clean package
 
 # Run JAR
-java -jar build/libs/spring-boot-ai-mongodb-mcp-server-1.0.0.jar
+java -jar target/spring-boot-ai-mongo-mcp-server-0.0.1-SNAPSHOT.jar
+
+# Run JAR with specific profile
+java -jar target/spring-boot-ai-mongo-mcp-server-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
 ```
 
 #### Using Docker
 ```bash
 # Build Docker image
-./gradlew jibDockerBuild
+docker build -t deepai/spring-boot-ai-mongo-mcp-server:1.0.0 .
 
 # Run container
 docker run -p 8080:8080 \
@@ -130,66 +187,59 @@ This server implements the Model Context Protocol (MCP) 1.0 specification. Once 
 ### Available MCP Tools
 
 <details>
-<summary><strong>Core Database Operations (21 tools)</strong></summary>
+<summary><strong>Core Database Operations (22 tools)</strong></summary>
 
-1. `mongo_list_databases` - List all databases with statistics
-2. `mongo_create_database` - Create a new database
-3. `mongo_drop_database` - Drop an existing database
-4. `mongo_list_collections` - List collections in a database
-5. `mongo_create_collection` - Create a new collection
-6. `mongo_drop_collection` - Drop a collection
-7. `mongo_insert_document` - Insert a single document
-8. `mongo_insert_many_documents` - Insert multiple documents
-9. `mongo_find_documents` - Find documents with filtering
-10. `mongo_find_document_by_id` - Find document by ObjectId
-11. `mongo_update_document` - Update a single document
-12. `mongo_update_many_documents` - Update multiple documents
-13. `mongo_delete_document` - Delete a single document
-14. `mongo_delete_many_documents` - Delete multiple documents
-15. `mongo_count_documents` - Count documents with filtering
-16. `mongo_distinct_values` - Get distinct field values
-17. `mongo_create_index` - Create database indexes
-18. `mongo_list_indexes` - List collection indexes
-19. `mongo_database_stats` - Get database statistics
-20. `mongo_collection_stats` - Get collection statistics
-21. `mongo_validate_connection` - Test database connectivity
-
-</details>
-
-<details>
-<summary><strong>Advanced Analytics & Administration (15 tools)</strong></summary>
-
-1. `mongo_aggregate_pipeline` - Execute aggregation pipelines
-2. `mongo_faceted_search` - Multi-faceted search operations
-3. `mongo_text_search` - Full-text search with scoring
-4. `mongo_geospatial_query` - Geographic location queries
-5. `mongo_time_series_analysis` - Time-based data analysis
-6. `mongo_explain_query` - Query execution analysis
-7. `mongo_optimize_indexes` - Index optimization recommendations
-8. `mongo_backup_collection` - Backup collection data
-9. `mongo_restore_collection` - Restore collection from backup
-10. `mongo_migrate_data` - Data migration between collections
-11. `mongo_bulk_operations` - Efficient bulk data operations
-12. `mongo_transaction_demo` - Multi-document transactions
-13. `mongo_schema_analysis` - Analyze document schemas
-14. `mongo_performance_monitoring` - Monitor query performance
-15. `mongo_maintenance_operations` - Database maintenance tasks
+1. `listDatabases` - List all databases with statistics
+2. `createDatabase` - Create a new database with initial collection
+3. `dropDatabase` - Drop an existing database
+4. `getDatabaseStats` - Get comprehensive database statistics
+5. `ping` - Test database connectivity
+6. `listCollections` - List collections in a database with metadata
+7. `createCollection` - Create a new collection with schema validation
+8. `dropCollection` - Drop a collection
+9. `getCollectionStats` - Get detailed collection statistics
+10. `renameCollection` - Rename a collection safely
+11. `insertDocument` - Insert a single document with validation
+12. `insertMany` - Insert multiple documents in bulk
+13. `findDocument` - Advanced queries with projection and sorting
+14. `findOne` - Find a single document by criteria
+15. `updateDocument` - Update documents matching criteria
+16. `deleteDocument` - Delete documents matching criteria
+17. `countDocuments` - Count documents with filtering
+18. `simpleQuery` - Execute simple field-value queries
+19. `complexQuery` - Execute complex MongoDB queries
+20. `listIndexes` - List all indexes for a collection
 
 </details>
 
 <details>
-<summary><strong>AI-Powered Operations (10 tools)</strong></summary>
+<summary><strong>Advanced Analytics & Administration (12 tools)</strong></summary>
 
-1. `mongo_ai_vector_search` - Semantic vector search
-2. `mongo_ai_generate_embeddings` - Generate text embeddings
-3. `mongo_ai_content_recommendation` - AI-powered content recommendations
-4. `mongo_ai_document_classification` - Classify documents using AI
-5. `mongo_ai_sentiment_analysis` - Analyze text sentiment
-6. `mongo_ai_text_generation` - Generate content with AI
-7. `mongo_ai_query_translation` - Convert natural language to MongoDB queries
-8. `mongo_ai_data_insights` - Generate intelligent data insights
-9. `mongo_ai_anomaly_detection` - Detect data anomalies
-10. `mongo_ai_clustering_analysis` - Perform AI-based data clustering
+1. `aggregatePipeline` - Execute complex aggregation pipelines
+2. `distinctValues` - Get distinct field values with filtering
+3. `groupByField` - Group documents by field with counts
+4. `textSearch` - Full-text search with scoring
+5. `geoSearch` - Geospatial queries and operations
+6. `createIndex` - Create single or compound indexes
+7. `createVectorIndex` - Create vector search indexes for AI
+8. `dropIndex` - Drop/delete indexes by name
+9. `reIndex` - Rebuild all indexes for optimization
+10. `explainQuery` - Analyze query execution plans
+11. `validateSchema` - Validate document schemas
+12. `repairDatabase` - Database maintenance and repair
+
+</details>
+
+<details>
+<summary><strong>AI-Powered Operations (7 tools)</strong></summary>
+
+1. `vectorSearch` - Semantic similarity search using embeddings
+2. `aiAnalyzeDocument` - AI-powered document content analysis
+3. `aiAnalyzeCollection` - Intelligent collection structure analysis
+4. `aiQuerySuggestion` - Get AI suggestions for optimal queries
+5. `aiDocumentSummary` - Generate AI-powered document summaries
+6. `semanticSearch` - Natural language search across collections
+7. `generateEmbeddings` - Generate vector embeddings using AI models
 
 </details>
 
@@ -203,7 +253,7 @@ import { MCPClient } from '@modelcontextprotocol/sdk';
 
 const client = new MCPClient({
   command: 'java',
-  args: ['-jar', 'spring-boot-ai-mongodb-mcp-server-1.0.0.jar'],
+  args: ['-jar', 'spring-boot-ai-mongo-mcp-server-0.0.1-SNAPSHOT.jar'],
   env: {
     SPRING_DATA_MONGODB_URI: 'mongodb://localhost:27017/mcpdb'
   }
@@ -372,26 +422,41 @@ The application includes comprehensive monitoring:
 
 ### Unit Tests
 ```bash
-# Run all tests
-./gradlew test
+# Run all tests (Linux/Mac)
+./mvnw test
 
-# Run tests with coverage
-./gradlew test jacocoTestReport
+# Run all tests (Windows)
+mvnw.cmd test
 
-# View coverage report
-open build/reports/jacoco/test/html/index.html
+# Run tests with coverage (Linux/Mac)
+./mvnw test jacoco:report
+
+# Run tests with coverage (Windows)
+mvnw.cmd test jacoco:report
+
+# View coverage report (Linux/Mac)
+open target/site/jacoco/index.html
+
+# View coverage report (Windows)
+start target/site/jacoco/index.html
 ```
 
 ### Integration Tests
 ```bash
-# Run integration tests (requires Docker)
-./gradlew integrationTest
+# Run integration tests (requires Docker) - Linux/Mac
+./mvnw verify -P integration-test
+
+# Run integration tests (requires Docker) - Windows
+mvnw.cmd verify -P integration-test
 ```
 
 ### Load Testing
 ```bash
-# Performance testing with MongoDB operations
-./gradlew performanceTest
+# Performance testing with MongoDB operations (Linux/Mac)
+./mvnw test -P performance-test
+
+# Performance testing with MongoDB operations (Windows)
+mvnw.cmd test -P performance-test
 ```
 
 ## 🔒 Security
