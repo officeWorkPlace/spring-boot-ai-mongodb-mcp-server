@@ -1,0 +1,225 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build and Test Spring Boot Service",
+			"type": "shell",
+			"command": "mvn clean install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$maven"
+			],
+			"group": "build"
+		}
+	]
+}
