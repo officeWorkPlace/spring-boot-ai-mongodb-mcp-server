@@ -18,6 +18,13 @@
 │   Client    │◄──►│ MCP Protocol │◄──►│ Spring Boot    │◄──►│  MongoDB    │
 │  (You/API)  │    │   Layer      │    │  MCP Server    │    │  Database   │
 └─────────────┘    └──────────────┘    └────────────────┘    └─────────────┘
+                                                 │                    ▲
+                                                 ▼                    │
+                                        ┌────────────────┐           │
+                                        │ Visualization  │           │
+                                        │    Engine      │───────────┘
+                                        │ (Python Dashboard)
+                                        └────────────────┘
 ```
 
 ### **Technology Stack**
@@ -25,6 +32,7 @@
 - **Database:** MongoDB with native Java driver
 - **Protocol:** Model Context Protocol (MCP)
 - **AI Integration:** OpenAI/Claude compatible
+- **Visualization:** Python-based analytics dashboard (`mydb_visualization.py`)
 - **Containerization:** Docker & Docker Compose ready
 
 ---
@@ -337,6 +345,248 @@ db.reviews.createIndex({"productId": 1, "rating": -1})
 2. Add schema validation rules
 3. Set up monitoring and alerting
 4. Configure production environment variables
+
+---
+
+## 📊 **Data Visualization & Analytics**
+
+### **🎨 Visualization Capabilities**
+
+The MongoDB MCP Server integrates with powerful data visualization tools to provide comprehensive insights into your database operations and content.
+
+#### **📈 Python Visualization Script**
+**Location:** `scripts/mydb_visualization.py`
+
+**Generated Visualizations:**
+- **📊 Main Dashboard:** `scripts/mydb_dashboard.png` - Comprehensive overview with multiple charts
+- **🔗 Network Graph:** `scripts/mydb_network.png` - Data relationship visualization
+
+**Key Features:**
+- **Real-time Database Monitoring:** Live visualization of database metrics and performance
+- **Collection Analytics:** Visual representation of document counts, sizes, and growth patterns
+- **Query Performance Tracking:** Charts showing query execution times and optimization opportunities
+- **Data Distribution Analysis:** Graphs displaying data patterns and distribution across collections
+- **Interactive Dashboards:** Dynamic charts with filtering and drill-down capabilities
+- **Relationship Mapping:** Network diagrams showing data connections between collections
+
+#### **🖼️ Generated Visualization Files**
+
+The visualization script generates two main output files:
+
+**1. Database Dashboard (`scripts/mydb_dashboard.png`)**
+- Collection document counts with color-coded bars
+- Storage distribution pie chart showing space usage per collection
+- Average document size comparison across collections
+- Data relationship diagram with connection arrows
+- Order status distribution analysis
+- Product category breakdown
+- User demographics and age distribution
+- Database performance metrics
+- Query execution time analysis
+- Index usage statistics
+- Connection pool monitoring
+- Cache hit rate visualization
+
+**2. Network Relationship Graph (`scripts/mydb_network.png`)**
+- Interactive node-based visualization of collection relationships
+- Connection lines showing data links between collections
+- Labels indicating relationship types (user_email, items, product references)
+- Circular node layout for clear relationship mapping
+- Color-coded connections for different relationship types
+
+**Usage Instructions:**
+```bash
+# Run the visualization script
+python scripts/mydb_visualization.py
+
+# Output files will be generated in the scripts/ directory:
+# - scripts/mydb_dashboard.png (Main analytics dashboard)
+# - scripts/mydb_network.png (Relationship network graph)
+```
+
+#### **🖼️ Sample Visualizations**
+
+**Database Overview Dashboard:**
+```
+📊 MongoDB Database Analytics Dashboard
+┌─────────────────────────────────────────────────────────────┐
+│ Database: mcpserver                     📈 Total Docs: 1,245 │
+│ Collections: 6                          💾 Size: 15.2 MB     │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Collection Distribution                Query Performance    │
+│  ┌─────────┐ ▄▄▄▄▄                     ┌─────────────────┐  │
+│  │users    │ ████████ 45%              │ Avg: 12ms       │  │
+│  │products │ ██████   30%              │ P95: 45ms       │  │
+│  │orders   │ ████     20%              │ P99: 120ms      │  │
+│  │logs     │ █        5%               │ Slow: 3 queries │  │
+│  └─────────┘                           └─────────────────┘  │
+│                                                             │
+│  Growth Trend (Last 7 days)           Index Efficiency     │
+│  Documents ▲                          ┌─────────────────┐  │
+│   1200 ┤   ▄▄▄                        │ Used: 85%       │  │
+│   1000 ┤ ▄▄   ▄                       │ Missing: 2      │  │
+│    800 ┤▄      ▄▄                     │ Unused: 1       │  │
+│    600 └─────────────► Time           └─────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Collection Deep Dive Visualization:**
+```
+📊 Collection: users (Real-time Analysis)
+┌─────────────────────────────────────────────────────────────┐
+│ Document Count: 562                     Last Updated: 2m ago │
+│ Average Size: 2.1 KB                   Growth Rate: +15/day  │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Field Distribution                    Document Size Dist.  │
+│  ┌─────────────────┐                  ┌─────────────────┐  │
+│  │ email    100%   │                  │     ▄▄▄         │  │
+│  │ name     100%   │                  │   ▄▄   ▄▄       │  │
+│  │ age       95%   │                  │ ▄▄       ▄▄     │  │
+│  │ address   80%   │                  │▄           ▄▄▄  │  │
+│  │ phone     60%   │                  └─────────────────┘  │
+│  └─────────────────┘                  1KB  2KB  3KB  4KB   │
+│                                                             │
+│  Query Patterns (Top 5)               Response Times       │
+│  ▓▓▓▓▓▓▓▓▓▓ find by email (45%)       ┌─────────────────┐  │
+│  ▓▓▓▓▓▓▓   find by age range (30%)    │ Fast: ████ 80%  │  │
+│  ▓▓▓▓      aggregation (15%)          │ Med:  ██   15%  │  │
+│  ▓▓        count documents (8%)       │ Slow: █     5%  │  │
+│  ▓         full scan (2%)             └─────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Performance Monitoring Dashboard:**
+```
+📊 Real-time Performance Monitor
+┌─────────────────────────────────────────────────────────────┐
+│ Status: 🟢 Healthy    Uptime: 24h 15m    Load: Medium      │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Operations/Second                     Memory Usage         │
+│  Ops ▲                                ┌─────────────────┐  │
+│   50 ┤     ▄▄▄                        │ Used: ▓▓▓▓  65% │  │
+│   40 ┤   ▄▄   ▄▄                      │ Free: ░░░   35% │  │
+│   30 ┤ ▄▄       ▄▄                    │ Total: 512 MB   │  │
+│   20 └─────────────► Time             └─────────────────┘  │
+│                                                             │
+│  Connection Pool                       Cache Hit Rate      │
+│  ┌─────────────────┐                  ┌─────────────────┐  │
+│  │ Active:   12    │                  │ Hits:  ▓▓▓▓ 92% │  │
+│  │ Idle:     8     │                  │ Miss:  ░    8%  │  │
+│  │ Max:      20    │                  │ Total: 1,245    │  │
+│  │ Waiting:  0     │                  └─────────────────┘  │
+│  └─────────────────┘                                      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Query Analysis Visualization:**
+```
+📊 Query Performance Analytics
+┌─────────────────────────────────────────────────────────────┐
+│ Time Range: Last 1 hour               Analyzed: 2,150 queries│
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Execution Time Distribution           Slow Query Analysis  │
+│  Count ▲                              ┌─────────────────┐  │
+│   800  ┤▓▓▓▓▓▓▓▓▓                     │ > 100ms:    23  │  │
+│   600  ┤▓▓▓▓▓▓                        │ > 500ms:     7  │  │
+│   400  ┤▓▓▓                           │ > 1000ms:    2  │  │
+│   200  ┤▓                             │ Timeouts:    0  │  │
+│      0 └─────────────► Time (ms)      └─────────────────┘  │
+│        0-10  10-50  50-100  100+                          │
+│                                                             │
+│  Index Usage Patterns                 Query Types          │
+│  ┌─────────────────┐                  ┌─────────────────┐  │
+│  │ IXSCAN:  ▓▓▓▓▓▓▓ 78%              │ find():   ████   │  │
+│  │ COLLSCAN: ▓▓▓   20%              │ aggregate(): ██   │  │
+│  │ IDHACK:   ▓      2%              │ count():    █     │  │
+│  └─────────────────┘                  │ update():   █     │  │
+│                                       └─────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### **📊 Supported Visualizations**
+
+| Visualization Type | Purpose | Data Source | Output Format |
+|-------------------|---------|-------------|---------------|
+| **Database Overview** | High-level metrics | `listDatabases`, `getDatabaseStats` | Interactive Charts |
+| **Collection Metrics** | Collection analysis | `listCollections`, `getCollectionStats` | Bar/Line Charts |
+| **Document Trends** | Growth patterns | `countDocuments`, `aggregate` | Time Series |
+| **Query Performance** | Optimization insights | Query execution logs | Performance Graphs |
+| **Index Efficiency** | Index usage analysis | `listIndexes`, index stats | Efficiency Metrics |
+| **Data Distribution** | Field value analysis | `aggregate` pipelines | Histograms/Pie Charts |
+
+#### **🔧 Integration with MCP Tools**
+
+The visualization script leverages the following MCP tools for data collection:
+
+```python
+# Example integration points
+mcp_tools = {
+    'database_metrics': ['listDatabases', 'getDatabaseStats'],
+    'collection_analysis': ['listCollections', 'getCollectionStats'],
+    'document_insights': ['countDocuments', 'aggregate'],
+    'performance_data': ['explainQuery', 'getCollectionStats'],
+    'search_analytics': ['vectorSearch', 'semanticSearch']
+}
+```
+
+#### **📋 Visualization Use Cases**
+
+1. **Database Health Monitoring**
+   - Track database growth over time
+   - Monitor collection sizes and document counts
+   - Identify performance bottlenecks
+
+2. **Business Intelligence**
+   - Analyze customer data patterns
+   - Visualize sales trends and metrics
+   - Generate executive dashboards
+
+3. **Development Insights**
+   - Query performance optimization
+   - Index usage analysis
+   - Schema evolution tracking
+
+4. **Operations Management**
+   - Real-time system monitoring
+   - Capacity planning visualizations
+   - Error rate and success metrics
+
+#### **🎯 Getting Started with Visualization**
+
+1. **Run the Visualization Script:**
+   ```bash
+   python mydb_visualization.py
+   ```
+
+2. **Connect to MCP Server:**
+   - Uses the same MongoDB connection as MCP server
+   - Leverages MCP tools for data retrieval
+   - Real-time updates from live database
+
+3. **Access Interactive Dashboard:**
+   - Web-based interface for exploring data
+   - Customizable chart types and filters
+   - Export capabilities for reports
+
+#### **📈 Sample Visualization Outputs**
+
+- **Database Growth Trends:** Line charts showing database size over time
+- **Collection Distribution:** Pie charts of document counts per collection
+- **Query Performance:** Heat maps of query execution times
+- **Field Analysis:** Bar charts of field value distributions
+- **Index Usage:** Gauge charts showing index efficiency metrics
+
+#### **🔄 Real-time Updates**
+
+The visualization system provides:
+- **Live Data Refresh:** Automatic updates every 30 seconds
+- **Event-driven Updates:** Immediate refresh on database changes
+- **Historical Tracking:** Maintains time-series data for trend analysis
+- **Alert Integration:** Visual indicators for performance thresholds
 
 ### **🚀 Future Enhancements**
 1. Explore AI-powered features (embeddings, semantic search)
