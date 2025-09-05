@@ -1,0 +1,53 @@
+# MCP-specific configuration for MongoDB MCP Server
+spring:
+  application:
+    name: mongo-mcp-server
+  main:
+    web-application-type: none
+    banner-mode: off
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/mcpserver}
+      database: ${MONGO_DATABASE:mcpserver}
+      connection-timeout: 20000ms
+      socket-timeout: 60000ms
+      max-connection-idle-time: 120000ms
+      max-connection-life-time: 300000ms
+
+# Logging configuration optimized for MCP
+logging:
+  level:
+    com.deepai: INFO
+    com.deepai.mcp: DEBUG
+    org.springframework.ai: INFO
+    org.springframework.data.mongodb: WARN
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# MCP Server Configuration
+mcp:
+  server:
+    name: mongo-mcp-server
+    version: 0.0.1
+    description: MongoDB MCP Server with AI capabilities
+    timeout: 60000
+    max-connections: 10
+
+# MongoDB Connection Pool Configuration
+mongodb:
+  connection-pool:
+    min-size: 2
+    max-size: 10
+    max-wait-time: 30000
+    max-connection-idle-time: 120000
+    max-connection-life-time: 300000
+
+# Actuator for health checks
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
